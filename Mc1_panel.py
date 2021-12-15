@@ -245,18 +245,15 @@ def generate_point(index):
                       sg.In(key='dac2_{0}_30'.format(index), size = (6, 1)),
                       sg.In(key='dac2_{0}_31'.format(index), size = (6, 1)),
                       ],
-        [sg.T('RF data must contains 25 nibble [0-F]'),],
-        [sg.T('RF 0-3'),
-                    sg.In(key='rf_{0}_0'.format(index), size = (30, 1)),
-                    sg.In(key='rf_{0}_1'.format(index), size = (30, 1)),
-                    sg.In(key='rf_{0}_2'.format(index), size = (30, 1)),
-                    sg.In(key='rf_{0}_3'.format(index), size = (30, 1)),
+        [sg.T('RF data for all the 8 boards is 100 bytes'),],
+        [sg.T('RF byte 1-50  '),
+                    sg.In(key='rf_{0}_0'.format(index), size = (50, 1)),
+                    sg.In(key='rf_{0}_1'.format(index), size = (50, 1)), 
         ],
-        [sg.T('RF 4-7'),
-                    sg.In(key='rf_{0}_4'.format(index), size = (30, 1)),
-                    sg.In(key='rf_{0}_5'.format(index), size = (30, 1)),
-                    sg.In(key='rf_{0}_6'.format(index), size = (30, 1)),
-                    sg.In(key='rf_{0}_7'.format(index), size = (30, 1)),
+        
+        [sg.T('RF byte 51-100'),
+                    sg.In(key='rf_{0}_2'.format(index), size = (50, 1)),
+                    sg.In(key='rf_{0}_3'.format(index), size = (50, 1)),
         ]                           
     ]
     return tmp_layout
@@ -268,8 +265,11 @@ def main():
     font_family, font_size = font = ('Courier New', 10)
     sg.set_options(font=font)
 
-    vBias = 100
-    v_lsb = 0.0125
+    # vBias = 100
+    # v_lsb = 0.0125
+
+    vBias = 1
+    v_lsb = 1
 
 
     
@@ -287,12 +287,12 @@ def main():
                     sg.Button('QueryFlash'),],
             
                 [sg.T('Table'),sg.Combo(tables,key='-table-',default_value=0),
-                    sg.T('Page'),   sg.Combo(pages, key='-page-' ,default_value=0),
+                    sg.T('Page '),   sg.Combo(pages, key='-page-' ,default_value=0),
                     sg.Button('ReadPoints'),sg.Button('WritePoints', disabled=True),
                     sg.Button('ErasePage',  font=font, button_color='red'),sg.T('...', key="elapsed", size=(10,1)),],
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
-                    sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-' ,default_value=0),
+                    sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
                     sg.Button("Send Angle", key = "angle-to-mc2"),],
                         
                     [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
@@ -359,11 +359,257 @@ def main():
             buffer = receiveBuffer(serialChannel)
             if buffer: decode_input_data(window,buffer)
 
+        elif event == "angle-to-mc2":
+    
+            table=window['-table-mc2-'].get()
+            point=window['-angles-mc2-'].get()
+            print("table {0}, point {1}".format(table,point))  # {0},{1} indicano dei simboli sostituibili dai valori posti come anrgomento dnetro format print("When you multiply {0} and {1} or {0} and {2}, the result is {0}".format(0,1,2))
+            data=R_ANGLE_TO_MC2 + pack('<2h', table,point)
+            print(data)
+            serialChannel.write(data)
+            serialChannel.write(b'\n')
+            serialChannel.flush() # svuoto il buffer
+
+            #struct.pack(format, v1, v2, ...)
+            #Return a bytes object containing the values v1, v2, … packed according to the format string format.
+            #The arguments must match the values required by the format exactly.
+            #'<2h' significa little endian e tipo short
+
+
+        elif event == "read-flash-file":
+            filename = sg.popup_get_file("Select file to read", save_as=False, default_path=window["flash-data-filepath"].get())
+            #raw_data = window['-flash-data-']
+            if filename:
+                try:
+                    window["flash-data-filepath"].update(filename)
+                    flash_table_data=[];
+                    file = open(filename,"r")
+                    lines= file.readlines()
+                    file.close()
+                    index=0
+                    for next_line in lines:
+                        tmp_data=next_line.strip().split(",")
+                        for i in range(16):
+                            window["dac1_{0}_{1}".format(index,i)].update(tmp_data[i])
+                        for i in range(16,32):
+                            window["dac1_{0}_{1}".format(index,i)].update(tmp_data[i])
+                        for i in range(16):
+                            window["dac2_{0}_{1}".format(index,i)].update(tmp_data[i+32])
+                        for i in range(16,32):
+                            window["dac2_{0}_{1}".format(index,i)].update(tmp_data[i+32])
+                        for i in range(8):
+                            window["rf_{0}_{1}".format(index,i)].update(tmp_data[64+i])
+                        #window["rf_{0}_{1}".format(index,0)].update(tmp_data[64])
+                        index+=1
+                except NotImplementedError:
+                    pass
+        elif event == "write-flash-file":
+            filename = sg.popup_get_file("Select file to store data", save_as=True)
+            file=open(filename,"w")
+            #         for line in raw_data.get():
+            #             file.write(line[1])
+            #             file.write("\r\n")
+            #         file.close()
+            for i in range(16):
+                point_data = []
+                for index in range(32):
+                    file.write(str(window["dac1_{0}_{1}".format(i,index)].get()))
+                    file.write(",")
+                for index in range(32):
+                    file.write(str(window["dac2_{0}_{1}".format(i,index)].get()))
+                    file.write(",")
+                for index in range(8):
+                    file.write(str(window["rf_{0}_{1}".format(i,index)].get()))
+                    file.write(",")
+                file.write("\r\n")
+            file.close()    
+        elif event == "WritePoints":
+            try:
+                table = int(window['-table-'].get())
+                page = int(window['-page-'].get())
+
+                for i in range(16):
+                    point_data = []
+                    for index in range(32):
+                        #(vBias-voltage)  / v_lsb --> decimal value for DAC
+                        voltage     = window["dac1_{0}_{1}".format(i,index)].get()
+                        voltage     = float(voltage)
+                        dac_decimal = round((vBias - voltage) / v_lsb,2)
+                        if dac_decimal < 0 or dac_decimal > 16000:
+                            raise ValueError("Point {}: DAC1 channel {} out of range".format(i,index))
+                        point_data.append(int(dac_decimal))
+
+                    for index in range(32):
+                        #(vBias-voltage)  / v_lsb --> decimal value for DAC
+                        voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
+                        dac_decimal = round((vBias - voltage) / v_lsb,2)
+                        if dac_decimal < 0 or dac_decimal > 16000:
+                            raise ValueError("Point {}: DAC2 channel {} out of range".format(i,index))
+                        point_data.append(int(dac_decimal))
+
+                    rf_data=[]
+                    for index in range(8):
+                        tmp_rf=window["rf_{0}_{1}".format(i,index)].get()
+                        if len(tmp_rf) != 25:
+                            raise ValueError("Point {}: RF channel {} invalid data".format(i,index))
+                        rf_data += tmp_rf
+
+                    point = (page*16)+i
+                    log("write point {} of table {} ".format(point,table))
+                    log("|".join(map(str,point_data)))
+
+                    data = R_WPOINT + pack('<2H', table,point) +  pack('<64H', *point_data) 
+
+                    for i in range(100):
+                        hexvalue="".join(rf_data[(i*2):(i*2+2)])
+                        data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='little'))
+                    
+                    data += b'\n'
+
+                    #print (data)
+                    serialChannel.write(data[0:30])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.write(data[30:60])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.write(data[60:90])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.write(data[90:120])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.write(data[120:150])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.write(data[150:180])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.write(data[180:])
+                    serialChannel.flush()
+                    sleep(0.3)
+                    serialChannel.flush()
+                    buffer = receiveBuffer(serialChannel)
+                    if buffer :
+                        log([len(buffer),buffer]) 
+                        elapsed = unpack_from("<1c",buffer, offset=1)
+                        window['point{0}'.format(i)].update(title='*{0}*'.format(i))
+
+                window['WritePoints'].update(disabled=True)
+            except ValueError as e: 
+                 sg.popup(e)
+                 log(e, "envet {} ERROR".format(event))
+                 pass     
+        elif event == "ReadPoints":
+            table = int(window['-table-'].get())
+            page = int(window['-page-'].get())
+            flash_table_data=[]
+            #raw_data=window["-flash-data-"]
+            for i in range(16):
+                serialChannel.write(EMPTY_BUFFER)
+                serialChannel.flush()
+                sleep(0.3)
+                point = (page*16)+i
+                log("ask point  {} of table {}".format(point,table))
+                data=R_RPOINT + pack('<2H', table,point) #metto in data la richiesta di lettura della flash e l'indirizzo
+                serialChannel.write(data)
+                serialChannel.flush()
+                sleep(0.3)
+                buffer = receiveBuffer(serialChannel)
+                log([len(buffer),buffer])
+                point_data=unpack_from("<114H",buffer, offset=2)
+                print(point_data)
+                for p in range(32):
+                    # dac_decimal = float(point_data[p])
+                    # dac_decimal *= v_lsb
+                    # voltage     = round(vBias - dac_decimal,2)
+                    window["dac1_{0}_{1}".format(i,p)].update(point_data[p]) 
+                    # dac_decimal = point_data[p+32]
+                    # dac_decimal *= v_lsb
+                    # voltage     = round(vBias - dac_decimal,2)
+                    window["dac2_{0}_{1}".format(i,p)].update(point_data[p+32])  # al posto di point_data[p+32] c'era voltage
+                
+                window["rf_{0}_{1}".format(i,0)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,1)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,2)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,3)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,4)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,5)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,6)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,7)].update("".join(map(str,point_data[64:])))
+                
+                window['point{0}'.format(i)].update(title='point{0}'.format(i))
+
+        elif event == "ErasePage":
+            try:
+                table = int(window['-table-'].get())
+                page = int(window['-page-'].get())
+                window['elapsed'].update("")
+                #window['-flash-data-'].update("".rstrip())
+                log("erasing page  {} of table {}".format(page,table))
+                data=R_ERASE_4K + pack('<2h', table,page)
+                serialChannel.write(data)
+                serialChannel.write(END_COMMAND)
+                serialChannel.flush()
+                sleep(0.5)
+                buffer  = receiveBuffer(serialChannel)
+                if buffer:
+                    log([len(buffer),buffer])
+                    elapsed = unpack_from("<1h",buffer, offset=1)
+                    window['elapsed'].update("{0} ms".format(elapsed[0]))
+                    window['WritePoints'].update(disabled=False)
+                
+            except ValueError as e:
+                sg.popup("wrong data")
+                log(e, "envet {} ERROR".format(event))
+                pass   
+        elif event == "eraseChip":
+            serialChannel.write(R_ERASE_CHIP)
+            serialChannel.flush()
+            pass
+        else:
+            print("event was:", event)
+            pass
+            # A timeout signals that all buttons have been released so clear the status display
+            #window['-monitor-'].update('')
+
     window.close()
 
 if __name__ == '__main__':
     sg.theme('DefaultNoMoreNagging')
     main()    
 
+#esempio pack
+# >>> from struct import *
+# >>> pack('<2h',0,1)
+# b'\x00\x00\x01\x00'
+# >>> pack('<2h',3,1)
+# b'\x03\x00\x01\x00'
+# >>> pack('>2h',3,1)
+# b'\x00\x03\x00\x01'
+
+#esempio unpack
+# struct.unpack_from(fmt, buffer[, offset=0])
+# Unpack the buffer according to the given format. The result is a tuple even if it contains exactly one item.
+# The buffer must contain at least the amount of data required by the format (len(buffer[offset:]) must be at least calcsize(fmt)).
 
 
+#Join all items in a tuple into a string, using a hash character as separator:
+# >>> tupla = ("john","peter","vicky")
+# >>> x = "x".join(tupla)
+# >>> x
+# 'john#peter#vicky'
+
+#map
+# map applica la funzione del primo argomento a tutti gli elementi messi come secondo argomento
+# numbers = [2, 4, 6, 8, 10]
+
+# # returns square of a number
+# def square(number):
+#   return number * number
+
+# # apply square() function to each item of the numbers list
+# squared_numbers_iterator = map(square, numbers)
+
+#window["rf_{0}_{1}".format(i,0)].update("".join(map(str,point_data[64:])))
+#
