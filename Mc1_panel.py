@@ -2,7 +2,7 @@
 #https://pysimplegui.readthedocs.io/en/latest/call%20reference/
 
 from datetime import datetime
-from os import *
+#from os import * #comando pericoloso in quanto import * importa un altro metodo per aprire i file che richide un integer
 import struct
 from time import sleep
 import PySimpleGUI as sg
@@ -378,7 +378,7 @@ def main():
                 try:
                     window["flash-data-filepath"].update(filename)
                     flash_table_data=[];
-                    file = open(filename,"r")
+                    file = open(filename,'r')
                     lines= file.readlines()
                     file.close()
                     index=0
@@ -392,9 +392,9 @@ def main():
                             window["dac2_{0}_{1}".format(index,i)].update(tmp_data[i+32])
                         for i in range(16,32):
                             window["dac2_{0}_{1}".format(index,i)].update(tmp_data[i+32])
-                        for i in range(8):
+                        for i in range(4): #i pezzi del file sono stati divisi dalle virgole, quindi l'ultimo blocco ho messo 4 virgole ogni 25 byte in modo tale da spezzare le 4 riche che ho messo nell'interfaccia
                             window["rf_{0}_{1}".format(index,i)].update(tmp_data[64+i])
-                        #window["rf_{0}_{1}".format(index,0)].update(tmp_data[64])
+                            #window["rf_{0}_{1}".format(index,0)].update(tmp_data[64])
                         index+=1
                 except NotImplementedError:
                     pass
@@ -413,7 +413,7 @@ def main():
                 for index in range(32):
                     file.write(str(window["dac2_{0}_{1}".format(i,index)].get()))
                     file.write(",")
-                for index in range(8):
+                for index in range(4):
                     file.write(str(window["rf_{0}_{1}".format(i,index)].get()))
                     file.write(",")
                 file.write("\r\n")
