@@ -173,88 +173,83 @@ def update_point_panel(window, data):
 def generate_point(index):
     tmp_layout=[
                 [sg.T('DAC1 00-15'),
-                      sg.In(key='dac1_{0}_0'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_1'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_2'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_3'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_4'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_5'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_6'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_7'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_8'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_9'.format(index), size =  (6, 1)),
-                      sg.In(key='dac1_{0}_10'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_11'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_12'.format(index), size = (6, 1)), 
-                      sg.In(key='dac1_{0}_13'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_14'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_15'.format(index), size = (6, 1)),
+                      sg.In(key='dac1_{0}_0'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_1'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_2'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_3'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_4'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_5'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_6'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_7'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_8'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_9'.format(index), size =  (5, 1)),
+                      sg.In(key='dac1_{0}_10'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_11'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_12'.format(index), size = (5, 1)), 
+                      sg.In(key='dac1_{0}_13'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_14'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_15'.format(index), size = (5, 1)),
                       ],
                 [sg.T('DAC1 16-31'),
-                      sg.In(key='dac1_{0}_16'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_17'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_18'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_19'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_20'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_21'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_22'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_23'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_24'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_25'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_26'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_27'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_28'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_29'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_30'.format(index), size = (6, 1)),
-                      sg.In(key='dac1_{0}_31'.format(index), size = (6, 1)),
+                      sg.In(key='dac1_{0}_16'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_17'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_18'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_19'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_20'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_21'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_22'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_23'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_24'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_25'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_26'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_27'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_28'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_29'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_30'.format(index), size = (5, 1)),
+                      sg.In(key='dac1_{0}_31'.format(index), size = (5, 1)),
 
                       ],
         [sg.T('DAC2 00-15'),
-                      sg.In(key='dac2_{0}_0'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_1'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_2'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_3'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_4'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_5'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_6'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_7'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_8'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_9'.format(index), size =  (6, 1)),
-                      sg.In(key='dac2_{0}_10'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_11'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_12'.format(index), size = (6, 1)), 
-                      sg.In(key='dac2_{0}_13'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_14'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_15'.format(index), size = (6, 1)),
+                      sg.In(key='dac2_{0}_0'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_1'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_2'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_3'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_4'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_5'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_6'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_7'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_8'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_9'.format(index), size =  (5, 1)),
+                      sg.In(key='dac2_{0}_10'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_11'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_12'.format(index), size = (5, 1)), 
+                      sg.In(key='dac2_{0}_13'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_14'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_15'.format(index), size = (5, 1)),
                       ],
                 [sg.T('DAC2 16-31'),
-                      sg.In(key='dac2_{0}_16'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_17'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_18'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_19'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_20'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_21'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_22'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_23'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_24'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_25'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_26'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_27'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_28'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_29'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_30'.format(index), size = (6, 1)),
-                      sg.In(key='dac2_{0}_31'.format(index), size = (6, 1)),
+                      sg.In(key='dac2_{0}_16'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_17'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_18'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_19'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_20'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_21'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_22'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_23'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_24'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_25'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_26'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_27'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_28'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_29'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_30'.format(index), size = (5, 1)),
+                      sg.In(key='dac2_{0}_31'.format(index), size = (5, 1)),
                       ],
         [sg.T('RF data for all the 8 boards is 100 bytes'),],
-        [sg.T('RF byte 1-50  '),
-                    sg.In(key='rf_{0}_0'.format(index), size = (50, 1)),
-                    sg.In(key='rf_{0}_1'.format(index), size = (50, 1)), 
-        ],
-        
-        [sg.T('RF byte 51-100'),
-                    sg.In(key='rf_{0}_2'.format(index), size = (50, 1)),
-                    sg.In(key='rf_{0}_3'.format(index), size = (50, 1)),
-        ]                           
+        [sg.T('RF byte 1-25  '),sg.In(key='rf_{0}_0'.format(index), size = (105, 1)),],
+        [sg.T('RF byte 26-50 '),sg.In(key='rf_{0}_1'.format(index), size = (105, 1)),],
+        [sg.T('RF byte 51-75 '),sg.In(key='rf_{0}_2'.format(index), size = (105, 1)),],
+        [sg.T('RF byte 76-100'),sg.In(key='rf_{0}_3'.format(index), size = (105, 1)),]                           
     ]
     return tmp_layout
 
@@ -512,31 +507,33 @@ def main():
                 point = (page*16)+i
                 log("ask point  {} of table {}".format(point,table))
                 data=R_RPOINT + pack('<2H', table,point) #metto in data la richiesta di lettura della flash e l'indirizzo
-                serialChannel.write(data)
-                serialChannel.flush()
-                sleep(0.3)
-                buffer = receiveBuffer(serialChannel)
+                serialChannel.write(data) #mando la richiesta al micro 1
+                serialChannel.flush() #svuoto il buffer
+                sleep(0.3) #aspetto 300 ms
+                buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
                 log([len(buffer),buffer])
-                point_data=unpack_from("<114H",buffer, offset=2)
-                print(point_data)
+                point_data_DAC=unpack_from("<68H",buffer, offset=2) #spacchetto i dati e li metto nella lista point_data
+                print(point_data_DAC) #stampo a monitor i dati dei DAC (es. 8000 --> 100 volt)
+
+
                 for p in range(32):
                     # dac_decimal = float(point_data[p])
                     # dac_decimal *= v_lsb
                     # voltage     = round(vBias - dac_decimal,2)
-                    window["dac1_{0}_{1}".format(i,p)].update(point_data[p]) 
+                    window["dac1_{0}_{1}".format(i,p)].update(point_data_DAC[p]) 
                     # dac_decimal = point_data[p+32]
                     # dac_decimal *= v_lsb
                     # voltage     = round(vBias - dac_decimal,2)
-                    window["dac2_{0}_{1}".format(i,p)].update(point_data[p+32])  # al posto di point_data[p+32] c'era voltage
+                    window["dac2_{0}_{1}".format(i,p)].update(point_data_DAC[p+32])  # al posto di point_data[p+32] c'era voltage
                 
-                window["rf_{0}_{1}".format(i,0)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,1)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,2)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,3)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,4)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,5)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,6)].update("".join(map(str,point_data[64:])))
-                window["rf_{0}_{1}".format(i,7)].update("".join(map(str,point_data[64:])))
+                window["rf_{0}_{1}".format(i,0)].update(str(buffer[130:155]))
+                window["rf_{0}_{1}".format(i,1)].update(str(buffer[155:180]))
+                window["rf_{0}_{1}".format(i,2)].update(str(buffer[180:205]))
+                window["rf_{0}_{1}".format(i,3)].update(str(buffer[205:230]))
+                
+                #window["rf_{0}_{1}".format(i,1)].update("".join(str(buffer[181:], 'UTF-8',errors='ignore')))
+                #hexvalue="".join(rf_data[(i*2):(i*2+2)])
+                #data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='little'))
                 
                 window['point{0}'.format(i)].update(title='point{0}'.format(i))
 
@@ -583,7 +580,7 @@ if __name__ == '__main__':
 # >>> from struct import *
 # >>> pack('<2h',0,1)
 # b'\x00\x00\x01\x00'
-# >>> pack('<2h',3,1)
+# >>> pack('<2h',3,1)  #usato nel pannello, i byte sono invertiti come little endian
 # b'\x03\x00\x01\x00'
 # >>> pack('>2h',3,1)
 # b'\x00\x03\x00\x01'
@@ -612,4 +609,21 @@ if __name__ == '__main__':
 # squared_numbers_iterator = map(square, numbers)
 
 #window["rf_{0}_{1}".format(i,0)].update("".join(map(str,point_data[64:])))
-#
+
+
+
+# >>> rf_data_1
+# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+# >>> rf_data_2=buffer[180:230]
+# >>> len(rf_data_2)
+# 50
+# >>> rf_data_2
+# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+# >>> rf_data_2=buffer[180:231]
+# >>> rf_data_2
+# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\n'
+# >>> len(rf_data_2)
+# 51
+# >>> dac_data=buffer[2:130]
+# >>> len(dac_data)
+# 128
