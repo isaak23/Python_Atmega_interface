@@ -330,7 +330,7 @@ def main():
                 buffer = receiveBuffer(serialChannel)
                 if buffer: decode_input_data(window,buffer)              
         elif event == "Connect":
-            serialPort = window["-port-"].get()
+            serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
             baudRate = window["-baudrate-"].get()
             serialChannel = Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
             if serialChannel.is_open :
@@ -392,7 +392,7 @@ def main():
                             window["dac2_{0}_{1}".format(index,i)].update(tmp_data[i+32])
                         for i in range(16,32):
                             window["dac2_{0}_{1}".format(index,i)].update(tmp_data[i+32])
-                        for i in range(4): #i pezzi del file sono stati divisi dalle virgole, quindi l'ultimo blocco ho messo 4 virgole ogni 25 byte in modo tale da spezzare le 4 riche che ho messo nell'interfaccia
+                        for i in range(4): #i pezzi del file sono stati divisi dalle virgole, quindi l'ultimo blocco ho messo 4 virgole ogni 25 byte in modo tale da spezzare le 4 righe che ho messo nell'interfaccia
                             window["rf_{0}_{1}".format(index,i)].update(tmp_data[64+i])
                             #window["rf_{0}_{1}".format(index,0)].update(tmp_data[64])
                         index+=1
@@ -427,25 +427,27 @@ def main():
                     point_data = []
                     for index in range(32):
                         #(vBias-voltage)  / v_lsb --> decimal value for DAC
-                        voltage     = window["dac1_{0}_{1}".format(i,index)].get()
-                        voltage     = float(voltage)
-                        dac_decimal = round((vBias - voltage) / v_lsb,2)
+                        # voltage     = window["dac1_{0}_{1}".format(i,index)].get() #prendo il valore contenuto nella cella e lo metto in voltage
+                        # voltage     = float(voltage) #converto voltage in float
+                        # dac_decimal = round((vBias - voltage) / v_lsb,2) #
+                        dac_decimal   = int(window["dac1_{0}_{1}".format(i,index)].get())
                         if dac_decimal < 0 or dac_decimal > 16000:
                             raise ValueError("Point {}: DAC1 channel {} out of range".format(i,index))
                         point_data.append(int(dac_decimal))
-
+                    
                     for index in range(32):
                         #(vBias-voltage)  / v_lsb --> decimal value for DAC
-                        voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
-                        dac_decimal = round((vBias - voltage) / v_lsb,2)
+                        # voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
+                        # dac_decimal = round((vBias - voltage) / v_lsb,2)
+                        dac_decimal   = int(window["dac2_{0}_{1}".format(i,index)].get())
                         if dac_decimal < 0 or dac_decimal > 16000:
                             raise ValueError("Point {}: DAC2 channel {} out of range".format(i,index))
                         point_data.append(int(dac_decimal))
 
                     rf_data=[]
-                    for index in range(8):
+                    for index in range(4):
                         tmp_rf=window["rf_{0}_{1}".format(i,index)].get()
-                        if len(tmp_rf) != 25:
+                        if len(tmp_rf) != 50: # prima era 25, non ricordo perché, ora metto 50 perché i byte di ogni riga sono 
                             raise ValueError("Point {}: RF channel {} invalid data".format(i,index))
                         rf_data += tmp_rf
 
@@ -453,14 +455,15 @@ def main():
                     log("write point {} of table {} ".format(point,table))
                     log("|".join(map(str,point_data)))
 
-                    data = R_WPOINT + pack('<2H', table,point) +  pack('<64H', *point_data) 
-
-                    for i in range(100):
-                        hexvalue="".join(rf_data[(i*2):(i*2+2)])
-                        data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='little'))
+                    data = R_WPOINT + pack('<2H', table,point) +  pack('<64H', *point_data) #metto dentro data i punti formattati
+                    
+                    q = 0
+                    for q in range(100):
+                        hexvalue="".join(rf_data[(q*2):(q*2+2)]) #prendo le coppie di caratteri e li metto insieme come byte
+                        data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='big')) #metto dentro data i dati delle schede rf, ho meso big al posto di little perché il micro2 si aspetta un big endiano
                     
                     data += b'\n'
-
+                    
                     #print (data)
                     serialChannel.write(data[0:30])
                     serialChannel.flush()
@@ -485,6 +488,7 @@ def main():
                     sleep(0.3)
                     serialChannel.flush()
                     buffer = receiveBuffer(serialChannel)
+                    
                     if buffer :
                         log([len(buffer),buffer]) 
                         elapsed = unpack_from("<1c",buffer, offset=1)
@@ -531,9 +535,6 @@ def main():
                 window["rf_{0}_{1}".format(i,2)].update(str(buffer[180:205]))
                 window["rf_{0}_{1}".format(i,3)].update(str(buffer[205:230]))
                 
-                #window["rf_{0}_{1}".format(i,1)].update("".join(str(buffer[181:], 'UTF-8',errors='ignore')))
-                #hexvalue="".join(rf_data[(i*2):(i*2+2)])
-                #data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='little'))
                 
                 window['point{0}'.format(i)].update(title='point{0}'.format(i))
 
