@@ -455,12 +455,12 @@ def main():
                     log("write point {} of table {} ".format(point,table))
                     log("|".join(map(str,point_data)))
 
-                    data = R_WPOINT + pack('<2H', table,point) +  pack('<64H', *point_data) #metto dentro data i punti formattati
+                    data = R_WPOINT + pack('<2H', table,point) +  pack('<64H', *point_data) #metto dentro data la richesta di lettura della flash, l'indirzzo da leggere e i punti formattati
                     
                     q = 0
                     for q in range(100):
                         hexvalue="".join(rf_data[(q*2):(q*2+2)]) #prendo le coppie di caratteri e li metto insieme come byte
-                        data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='big')) #metto dentro data i dati delle schede rf, ho meso big al posto di little perché il micro2 si aspetta un big endiano
+                        data += pack('c', int(hexvalue,base=16).to_bytes(1, byteorder='big')) #aggiungo dentro data i dati delle schede rf, ho meso big al posto di little perché il micro2 si aspetta un big endian
                     
                     data += b'\n'
                     
