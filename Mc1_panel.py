@@ -431,7 +431,7 @@ def main():
                         # voltage     = float(voltage) #converto voltage in float
                         # dac_decimal = round((vBias - voltage) / v_lsb,2) #
                         dac_decimal   = int(window["dac1_{0}_{1}".format(i,index)].get())
-                        if dac_decimal < 0 or dac_decimal > 16000:
+                        if dac_decimal < 0 or dac_decimal > 16384:
                             raise ValueError("Point {}: DAC1 channel {} out of range".format(i,index))
                         point_data.append(int(dac_decimal))
                     
@@ -440,7 +440,7 @@ def main():
                         # voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
                         # dac_decimal = round((vBias - voltage) / v_lsb,2)
                         dac_decimal   = int(window["dac2_{0}_{1}".format(i,index)].get())
-                        if dac_decimal < 0 or dac_decimal > 16000:
+                        if dac_decimal < 0 or dac_decimal > 16384:
                             raise ValueError("Point {}: DAC2 channel {} out of range".format(i,index))
                         point_data.append(int(dac_decimal))
 
