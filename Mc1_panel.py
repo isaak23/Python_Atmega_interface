@@ -7,7 +7,6 @@ import struct
 from time import sleep
 import PySimpleGUI as sg
 import os.path
-#import threading #il vecchio pannello usava un thread per aggiornare lo stato, poi rimosso
 from PySimpleGUI.PySimpleGUI import T, Multiline, popup
 from serial import *
 import serial.tools.list_ports
@@ -63,9 +62,32 @@ tables=list(range(0,13))
 flash_table_data=[]
 serialChannel=Serial()
 
-Flash = namedtuple("Flash",["ManID","Capacity", "MaxPages"])
+config_format='<8h8h8h8h6h13h4h' 
+Config = namedtuple('Config',
+           ['HeatEn0', 'HeatEn1','HeatEn2','HeatEn3','HeatEn4','HeatEn5','HeatEn6','HeatEn7',
+           'consKp0', 'consKp1', 'consKp2', 'consKp3', 'consKp4', 'consKp5', 'consKp6', 'consKp7',
+           'consKi0', 'consKi1', 'consKi2', 'consKi3', 'consKi4', 'consKi5', 'consKi6', 'consKi7',
+           'consKd0', 'consKd1', 'consKd2', 'consKd3', 'consKd4', 'consKd5', 'consKd6', 'consKd7',
+           'fan0','fan1','fan2','fan3', 'fan4', 'fan5',
+           'temperature_table0','temperature_table1','temperature_table2','temperature_table3','temperature_table4',
+           'temperature_table5','temperature_table6','temperature_table7','temperature_table8','temperature_table9',
+           'temperature_table10','temperature_table11','temperature_table12',
+           'adc_conv_paramenter','threshold_tolerance','pid_sample_time','max_pid_value'])
 
-flash_format='<hll'
+config=Config(   0,    0,    0,    0,    0,     0,    0,    0,
+              50,    50,    50,    50,     50,    50,    50,    50,
+               0,  0, 0,  0,  0, 0, 0, 0,   
+               0,  0, 0,  0,  0, 0, 0, 0,
+               0,    0,    0,     0,     0,    0,
+              2500,   2700,   2900,    3100,    3300,
+              3500,   3700,   3900,    4000,    4100,
+              4200,   4300,   4400,
+              1175,   100,    500,   127)
+
+Flash = namedtuple("Flash",["ManID","Capacity", "MaxPages"])
+Flash_debug = namedtuple("Flash_debug",["ManID_debug","Capacity_debug", "MaxPages_debug"])
+
+flash_format='<hll' #<--------controllare cosa è e a che cosa serve
 
 def serial_ports():
     """ Lists serial port names
@@ -99,19 +121,11 @@ def log(data , name="DEBUG"):
     print(datetime.now(), "|", name, "|", data)
 
 
-def update_config_panel(window, config):
-    for k in config._fields:
-        try:
-            window[k].update(getattr(config,k))
-        except:
-            pass
-    table = window["-table-"].get()
-
 def decode_input_data(window,data):
     cmd = data[:1] #first char define the type of data
 
     if cmd == FLASH_INFO:
-        flash = Flash._make( unpack_from(flash_format, data, offset=2))
+        flash = Flash._make( unpack_from(flash_format, data, offset=2)) # ._make() permette di clonare una namedtuple
         update_config_panel(window, flash)
         return 0
     else:
@@ -157,10 +171,6 @@ def receiveBuffer(serialChannel):
     opcode = b''
     max_size = 0
 
-        
-
-
-
 def update_point_panel(window, data):
     #raw_data=window["-flash-data-"]
     flash_table_data = raw_data.get()
@@ -169,6 +179,56 @@ def update_point_panel(window, data):
     new_data=",".join(str(x) for x in data).strip()
     flash_table_data.append([0,new_data])
     raw_data.update(values=flash_table_data)
+
+
+
+def update_sensor_panel(window, data):
+        #1 ->> PT1K_ADC[i];
+        #2 ->> PT1K_OHM[i];
+        #ohm_to_celsius(PT1K_OHM[i]);
+        #3 --> T_TARGET[i];
+        #4 --> T_HEATER[i];
+    sensors_data=data
+    sensor_num=sensors_data[0]
+    if len(sensors_data) == 7 and int(sensor_num) < 8:
+        temprature=window["Temperature"  +str(sensor_num)]
+        adc=window["ADC"  +str(sensor_num)]
+        target=window["Target"+str(sensor_num)]
+        delta=window["Delta"  +str(sensor_num)]
+        heater=window["Heat"  +str(sensor_num)]
+        heater_status=window["HeatStatus"  +str(sensor_num)]
+
+        adc.update(          "{0}".format(sensors_data[1]))
+        temprature.update(   "{0} °C".format(sensors_data[2]/100))
+        target.update(       "{0} °C".format(sensors_data[3]/100))
+        delta.update(        "{0} °C".format(sensors_data[4]/100))
+        heater_status.update("{0}".format(sensors_data[5]))
+        heater.update(       "{0}".format(sensors_data[6]))
+
+def update_monitor_panel(window, data):
+    monitor = window["-monitor-"]
+    monitor.update(monitor.get()+ "\r\n" + str(data))
+ 
+
+def update_config_panel(window, config):
+    for k in config._fields: #._fields serve per recuperare i parametri di una named tuple
+        try:
+            window[k].update(getattr(config,k)) #getattr prende il valore di un attributo di un oggetto, in questo caso di 'config' preleva l'attributo k che potrebbe essere l'indice di una lista
+        except:
+            pass
+    table = window["-table-"].get()
+    #window["-working-temp-"].update(window["temperature_table{}".format(table)].get())
+    
+def build_config_from_ui(window):
+    cc={}
+    for k in config._fields:
+        if k.startswith("consK"):
+          cc[k] = int(window[k].get())
+        elif k in ['none']: #['R1', 'R2', 'R3','VCOPAMP', 'VREF', 'interval', 'initial_temp', 'heater_enabled','OPAPM_GAIN',]:
+          cc[k] = window[k].get()
+        else:    
+          cc[k] = int(window[k].get())
+    return Config(**cc)
 
 def generate_point(index):
     tmp_layout=[
@@ -260,21 +320,176 @@ def main():
     font_family, font_size = font = ('Courier New', 10)
     sg.set_options(font=font)
 
-    # vBias = 100
-    # v_lsb = 0.0125
+    # rendere queste due grandezze configurabili da file
+    vBias = 100
+    v_lsb = 0.0125
 
-    vBias = 1
-    v_lsb = 1
+    tab1_layout =  [
+                        [sg.T('Configuration parameters')],
+                        [
+                            sg.T('A/D Parameter',size = (20, 1),     font=font),
+                            sg.T('m(ADC)'),sg.In(key='adc_conv_paramenter',     size = (10, 1)),
+                            sg.T('Tolerance'),sg.In(key='threshold_tolerance',  size = (10, 1)),
+                            sg.T('PID Sample Time'),sg.In(key='pid_sample_time',size = (10, 1)),
+                            sg.T('PID max output'),sg.In(key='max_pid_value',   size = (10, 1)),
+                            
+                        ],
+                        [
+                            sg.T('PID Paramenter',size = (20, 1)),
+                            sg.T('Prop.', size = (5, 1),font=font),
+                            sg.In(key='consKp0',size = (6, 1)),
+                            sg.In(key='consKp1',size = (6, 1)),
+                            sg.In(key='consKp2',size = (6, 1)),
+                            sg.In(key='consKp3',size = (6, 1)),
+                            sg.In(key='consKp4',size = (6, 1)),
+                            sg.In(key='consKp5',size = (6, 1)),
+                            sg.In(key='consKp6',size = (6, 1)),
+                            sg.In(key='consKp7',size = (6, 1)),
+                        ],
+                        [
+                            sg.T(' ',size = (20, 1)),
+                            sg.T('Deriv.', size = (5, 1)),
+                            sg.In(key='consKi0',size = (6, 1)),
+                            sg.In(key='consKi1',size = (6, 1)),
+                            sg.In(key='consKi2',size = (6, 1)),
+                            sg.In(key='consKi3',size = (6, 1)),
+                            sg.In(key='consKi4',size = (6, 1)),
+                            sg.In(key='consKi5',size = (6, 1)),
+                            sg.In(key='consKi6',size = (6, 1)),
+                            sg.In(key='consKi7',size = (6, 1)),
+                        ],
+                        [
+                            sg.T(' ',size = (20, 1)),
+                            sg.T('Integ.', size = (5, 1)),
+                            sg.In(key='consKd0',size = (6, 1)),
+                            sg.In(key='consKd1',size = (6, 1)),
+                            sg.In(key='consKd2',size = (6, 1)),
+                            sg.In(key='consKd3',size = (6, 1)),
+                            sg.In(key='consKd4',size = (6, 1)),
+                            sg.In(key='consKd5',size = (6, 1)),
+                            sg.In(key='consKd6',size = (6, 1)),
+                            sg.In(key='consKd7',size = (6, 1)),
+                        ],
+                        [ 
+                          sg.T('Temperature Table',size = (26, 1) ),
+                          sg.In(key='temperature_table0', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table1', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table2', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table3', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table4', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table5', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table6', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table7', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table8', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table9', visible=True, size=(5,1)),
+                          sg.In(key='temperature_table10',visible=True, size=(5,1)),
+                          sg.In(key='temperature_table11',visible=True, size=(5,1)),
+                          sg.In(key='temperature_table12',visible=True, size=(5,1)),],                        
+                        
+                        [
+                            sg.Button('Read Config', key="READ-CONFIG", disabled=True),
+                            sg.Button('Write Config', key="WRITE-CONFIG", disabled=True)
+                        ]
+                    ]
 
+    tab2_layout =   [
+                        [
+                            sg.T('FAN Control', size = (20, 1),font=font),
+                        
+                            sg.Checkbox("Fan  1", default = True, key = "fan0"), sg.Checkbox("Fan  2", default = True, key = "fan1"),
+                            sg.Checkbox("Fan  3", default = True, key = "fan2"), sg.Checkbox("Fan  4", default = True, key = "fan3"),
+                            sg.Checkbox("Fan  5", default = True, key = "fan4"), sg.Checkbox("Fan  6", default = True, key = "fan5")
+                        ],
 
-    
-    layout = [
-                [sg.T('Comm Port'),sg.Combo(serial_ports(), default_value='/dev/pts/2',size=(10,1),key='-port-'), 
-                    sg.T('Baud'),sg.Combo([9600,115200], default_value='115200',key='-baudrate-'),
-                    sg.Button('Connect'), sg.Button('Disconnect'), sg.T('----', key="connection_status"),
-                    sg.Exit(button_text = "Exit")],
+                        [
+                            sg.T('Heaters Control',size = (20, 1)),
+                            sg.Checkbox("Heat 1",default=False, key='HeatEn0'),
+                            sg.Checkbox("Heat 2",default=False, key='HeatEn1'),
+                            sg.Checkbox("Heat 3",default=False, key='HeatEn2'),
+                            sg.Checkbox("Heat 4",default=False, key='HeatEn3'),
+                            sg.Checkbox("Heat 5",default=False, key='HeatEn4'),
+                            sg.Checkbox("Heat 6",default=False, key='HeatEn5'),
+                            sg.Checkbox("Heat 7",default=False, key='HeatEn6'),
+                            sg.Checkbox("Heat 8",default=False, key='HeatEn7'),
+                        ],
+                        [sg.T('Sensors'),
+                         sg.Button('Enable', key="EnableMonitoring", disabled=False) ,
+                         sg.Button('Disable', key="DisableMonitoring", disabled=False) ,
+                        ],
+                        [
+                            sg.T('Temperature:',size = (20, 1)),
+                            sg.In(key='Temperature0',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature1',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature2',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature3',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature4',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature5',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature6',size = (10, 1),readonly=True),
+                            sg.In(key='Temperature7',size = (10, 1),readonly=True),
+                        ],               
+                        [
+                            sg.T('ADC:',size = (20, 1)),
+                            sg.In(key='ADC0',size = (10, 1),readonly=True),
+                            sg.In(key='ADC1',size = (10, 1),readonly=True),
+                            sg.In(key='ADC2',size = (10, 1),readonly=True),
+                            sg.In(key='ADC3',size = (10, 1),readonly=True),
+                            sg.In(key='ADC4',size = (10, 1),readonly=True),
+                            sg.In(key='ADC5',size = (10, 1),readonly=True),
+                            sg.In(key='ADC6',size = (10, 1),readonly=True),
+                            sg.In(key='ADC7',size = (10, 1),readonly=True),
+                        ],               
+                        [
+                            sg.T('Target:',size = (20, 1)),
+                            sg.In(key='Target0',size = (10, 1),readonly=True),
+                            sg.In(key='Target1',size = (10, 1),readonly=True),
+                            sg.In(key='Target2',size = (10, 1),readonly=True),
+                            sg.In(key='Target3',size = (10, 1),readonly=True),
+                            sg.In(key='Target4',size = (10, 1),readonly=True),
+                            sg.In(key='Target5',size = (10, 1),readonly=True),
+                            sg.In(key='Target6',size = (10, 1),readonly=True),
+                            sg.In(key='Target7',size = (10, 1),readonly=True),
+                            
+                        ],
+                        [
+                            sg.T('Delta:',size = (20, 1)),
+                            sg.In(key='Delta0',size = (10, 1),readonly=True),
+                            sg.In(key='Delta1',size = (10, 1),readonly=True),
+                            sg.In(key='Delta2',size = (10, 1),readonly=True),
+                            sg.In(key='Delta3',size = (10, 1),readonly=True),
+                            sg.In(key='Delta4',size = (10, 1),readonly=True),
+                            sg.In(key='Delta5',size = (10, 1),readonly=True),
+                            sg.In(key='Delta6',size = (10, 1),readonly=True),
+                            sg.In(key='Delta7',size = (10, 1),readonly=True),
+                            
+                        ],
+                        [
+                            sg.T('Heater:',size = (20, 1)),
+                            sg.In(key='Heat0',size = (10, 1),readonly=True),
+                            sg.In(key='Heat1',size = (10, 1),readonly=True),
+                            sg.In(key='Heat2',size = (10, 1),readonly=True),
+                            sg.In(key='Heat3',size = (10, 1),readonly=True),
+                            sg.In(key='Heat4',size = (10, 1),readonly=True),
+                            sg.In(key='Heat5',size = (10, 1),readonly=True),
+                            sg.In(key='Heat6',size = (10, 1),readonly=True),
+                            sg.In(key='Heat7',size = (10, 1),readonly=True),
+                            
+                        ],
+                        [
+                            sg.T('HeatStatus:',size = (20, 1)),
+                            sg.In(key='HeatStatus0',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus1',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus2',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus3',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus4',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus5',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus6',size = (10, 1),readonly=True),
+                            sg.In(key='HeatStatus7',size = (10, 1),readonly=True),
+                        ]       
+                    ] 
+    #flash management tab
+    tab3_layout = [
 
-                [sg.T('Flash Management')],
+                [sg.T('Flash Management') ],
                 [sg.T('FLASH ID'),
                     sg.T('ManID', key="ManID"),
                     sg.T('Capacity', key="Capacity"),
@@ -288,47 +503,73 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.Button("Send Angle", key = "angle-to-mc2"),],
+                    sg.Button("Send Angle", key = "angle-to-mc2"),
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (4,1)),sg.T("ms"), sg.Button('Set',key="set-inversion-time")],
                         
-                    [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
-                        sg.Button("Open", key = "read-flash-file"),
-                        sg.Button("Save", key = "write-flash-file"),],
+                [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
+                    sg.Button("Open", key = "read-flash-file"),
+                    sg.Button("Save", key = "write-flash-file"),],
+
+                [sg.Checkbox("Enable Debug mode",key="debug", default=False, size=(17,1)),sg.Button("Instruction")],
                         
-                        [sg.TabGroup([
+                [sg.TabGroup([
                             [
-                            sg.Tab('point0',  generate_point(0) , key='point0'),
-                            sg.Tab('point1',  generate_point(1) , key='point1'),
-                            sg.Tab('point2',  generate_point(2) , key='point2'),
-                            sg.Tab('point3',  generate_point(3) , key='point3'),
-                            sg.Tab('point4',  generate_point(4) , key='point4'),
-                            sg.Tab('point5',  generate_point(5) , key='point5'),
-                            sg.Tab('point6',  generate_point(6) , key='point6'),
-                            sg.Tab('point7',  generate_point(7) , key='point7'),  
-                            sg.Tab('point8',  generate_point(8) , key='point8'),  
-                            sg.Tab('point9',  generate_point(9) , key='point9'),  
-                            sg.Tab('point10', generate_point(10), key='point10'),  
-                            sg.Tab('point11', generate_point(11), key='point11'),  
-                            sg.Tab('point12', generate_point(12), key='point12'),  
-                            sg.Tab('point13', generate_point(13), key='point13'),  
-                            sg.Tab('point14', generate_point(14), key='point14'),  
-                            sg.Tab('point15', generate_point(15), key='point15'), 
+                    sg.Tab('point0',  generate_point(0) , key='point0'), #per ogni tab devo generare un layout , ma è meglio usare una funzione così è più ordinato e modulare
+                    sg.Tab('point1',  generate_point(1) , key='point1'),
+                    sg.Tab('point2',  generate_point(2) , key='point2'),
+                    sg.Tab('point3',  generate_point(3) , key='point3'),
+                    sg.Tab('point4',  generate_point(4) , key='point4'),
+                    sg.Tab('point5',  generate_point(5) , key='point5'),
+                    sg.Tab('point6',  generate_point(6) , key='point6'),
+                    sg.Tab('point7',  generate_point(7) , key='point7'),  
+                    sg.Tab('point8',  generate_point(8) , key='point8'),  
+                    sg.Tab('point9',  generate_point(9) , key='point9'),  
+                    sg.Tab('point10', generate_point(10), key='point10'),  
+                    sg.Tab('point11', generate_point(11), key='point11'),  
+                    sg.Tab('point12', generate_point(12), key='point12'),  
+                    sg.Tab('point13', generate_point(13), key='point13'),  
+                    sg.Tab('point14', generate_point(14), key='point14'),  
+                    sg.Tab('point15', generate_point(15), key='point15'), 
                             ]])
                         ]
                 ]
 
+    layout = [
+                [
+                        sg.T('Comm Port'),sg.Combo(serial_ports(), default_value='/dev/pts/2',key='-port-'), 
+                        sg.T('Baud'),sg.Combo([9600,115200], default_value='115200',key='-baudrate-'),
+                        sg.Button('Connect'), sg.Button('Disconnect'), sg.T('----', key="connection_status"),
+                        sg.Exit(button_text = "Exit")
+                ],
+                
+                [
+                        sg.TabGroup([[ sg.Tab('Configuration', tab1_layout),
+                            sg.Tab('Sensors', tab2_layout),
+                            sg.Tab('Flash Programming', tab3_layout)
+                        ]])
+                ],
+            ]     
     
     window = sg.Window("Control Panel", layout, finalize=True)
 
+    update_config_panel(window, config)
+
     serialChannel=Serial()
+
     # Run the Event Loop
     while True:
         event, values = window.read(500)
         if event in (sg.WIN_CLOSED, 'Quit', "Exit"):
             break
+
         if event == sg.TIMEOUT_EVENT:
             if serialChannel.is_open:
                 buffer = receiveBuffer(serialChannel)
-                if buffer: decode_input_data(window,buffer)              
+                if buffer: decode_input_data(window,buffer)
+    
+        elif event == "Instruction":
+            sg.popup('Debug Mode\n in debug mode the voltages for the DACs are in decimal format \n for example: 100 V correspond to 8000 \n the equation to convert voltage in decimal is\n Decimal = Voltage x 204.8 / 16384',title = 'Instruction')
+        
         elif event == "Connect":
             serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
             baudRate = window["-baudrate-"].get()
@@ -336,16 +577,27 @@ def main():
             if serialChannel.is_open :
                for i in range(255):
                    serialChannel.write(b'\n')
+
+               window["WRITE-CONFIG"].update(disabled=False)
+               window["READ-CONFIG"].update(disabled=False)
                window["Connect"].update(disabled=True, button_color="red") 
                window["connection_status"].update("Connected")
                connectionEnabled = True
         elif event == "Disconnect": 
-
+            window["WRITE-CONFIG"].update(disabled=True)
+            window["READ-CONFIG"].update(disabled=True)
             window["connection_status"].update("---")
             #window["MonitorBtn"].update(disabled=True, text="Start")
             window["Connect"].update(disabled=False, button_color="green") 
             connectionEnabled = False
             serialChannel.close
+
+        elif event == "READ-CONFIG":
+            serialChannel.write(READ_CONFIG)
+            serialChannel.write(END_COMMAND)
+            serialChannel.flush()
+            buffer = receiveBuffer(serialChannel)
+            if buffer: decode_input_data(window,buffer)
 
         elif event == "QueryFlash":
             serialChannel.write(FLASH_INFO)
@@ -353,6 +605,27 @@ def main():
             serialChannel.write(END_COMMAND)
             buffer = receiveBuffer(serialChannel)
             if buffer: decode_input_data(window,buffer)
+
+        elif event == "WRITE-CONFIG":
+            config=build_config_from_ui(window)
+            data = pack(config_format, *config._asdict().values())
+            serialChannel.write(WRITE_CONFIG + data[0:60])
+            sleep(0.3)
+            serialChannel.write(data[60:])
+            serialChannel.flush()
+            sleep(1)
+            buffer = receiveBuffer(serialChannel)
+            if buffer: decode_input_data(window,buffer)
+        elif event=="EnableMonitoring":
+            serialChannel.write(R_START)
+            serialChannel.write(END_COMMAND)
+            serialChannel.flush()
+            sleep(1)
+        elif event=="DisableMonitoring":
+            serialChannel.write(R_STOP)
+            serialChannel.write(END_COMMAND)
+            serialChannel.flush()
+            sleep(1)
 
         elif event == "angle-to-mc2":
     
@@ -369,7 +642,13 @@ def main():
             #Return a bytes object containing the values v1, v2, … packed according to the format string format.
             #The arguments must match the values required by the format exactly.
             #'<2h' significa little endian e tipo short
-
+        
+        elif event == "-SERIAL-":
+            #text = window['-monitor-']
+            try:
+                log(values[event],"RECV SERIAL")
+            except NotImplementedError:
+                pass
 
         elif event == "read-flash-file":
             filename = sg.popup_get_file("Select file to read", save_as=False, default_path=window["flash-data-filepath"].get())
@@ -423,7 +702,7 @@ def main():
                 table = int(window['-table-'].get())
                 page = int(window['-page-'].get())
 
-                for i in range(16):
+                for i in range(16): #16 sono i punti
                     point_data = []
                     for index in range(32):
                         #(vBias-voltage)  / v_lsb --> decimal value for DAC
@@ -445,7 +724,7 @@ def main():
                         point_data.append(int(dac_decimal))
 
                     rf_data=[]
-                    for index in range(4):
+                    for index in range(4): # 4 index sono le righe delle schede rf, i ricordo che 'i' sono i punti del for precedente
                         tmp_rf=window["rf_{0}_{1}".format(i,index)].get()
                         if len(tmp_rf) != 50: # prima era 25, non ricordo perché, ora metto 50 perché i byte di ogni riga sono 
                             raise ValueError("Point {}: RF channel {} invalid data".format(i,index))
@@ -455,7 +734,7 @@ def main():
                     log("write point {} of table {} ".format(point,table))
                     log("|".join(map(str,point_data)))
 
-                    data = R_WPOINT + pack('<2H', table,point) +  pack('<64H', *point_data) #metto dentro data la richesta di lettura della flash, l'indirzzo da leggere e i punti formattati
+                    data = R_WPOINT + pack('>2H', table,point) +  pack('>64H', *point_data) #metto dentro data la richesta di scrittura della flash, l'indirzzo da leggere e i punti formattati
                     
                     q = 0
                     for q in range(100):
@@ -510,16 +789,16 @@ def main():
                 sleep(0.3)
                 point = (page*16)+i
                 log("ask point  {} of table {}".format(point,table))
-                data=R_RPOINT + pack('<2H', table,point) #metto in data la richiesta di lettura della flash e l'indirizzo
+                data=R_RPOINT + pack('>2H', table,point) #metto in data la richiesta di lettura della flash e l'indirizzo
                 serialChannel.write(data) #mando la richiesta al micro 1
                 serialChannel.flush() #svuoto il buffer
                 sleep(0.3) #aspetto 300 ms
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
                 log([len(buffer),buffer])
-                point_data_DAC=unpack_from("<68H",buffer, offset=2) #spacchetto i dati e li metto nella lista point_data
+                point_data_DAC=unpack_from(">68H",buffer, offset=2) #spacchetto i dati e li metto nella lista point_data
                 print(point_data_DAC) #stampo a monitor i dati dei DAC (es. 8000 --> 100 volt)
 
-
+                # questo for gestisce i dati in modalità debug, quindi dac_decimal
                 for p in range(32):
                     # dac_decimal = float(point_data[p])
                     # dac_decimal *= v_lsb
@@ -540,7 +819,7 @@ def main():
 
         elif event == "ErasePage":
             try:
-                table = int(window['-table-'].get())
+                table = int(window['-table-'].get())    
                 page = int(window['-page-'].get())
                 window['elapsed'].update("")
                 #window['-flash-data-'].update("".rstrip())
@@ -565,6 +844,7 @@ def main():
             serialChannel.write(R_ERASE_CHIP)
             serialChannel.flush()
             pass
+        
         else:
             print("event was:", event)
             pass
@@ -574,7 +854,7 @@ def main():
     window.close()
 
 if __name__ == '__main__':
-    sg.theme('DefaultNoMoreNagging')
+    sg.theme('DefaultNoMoreNagging') 
     main()    
 
 #esempio pack
