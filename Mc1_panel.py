@@ -2,7 +2,6 @@
 #https://pysimplegui.readthedocs.io/en/latest/call%20reference/
 
 from datetime import datetime
-#from os import * #comando pericoloso in quanto import * importa un altro metodo per aprire i file che richide un integer
 import struct
 from time import sleep
 import PySimpleGUI as sg
@@ -85,7 +84,6 @@ config=Config(   0,    0,    0,    0,    0,     0,    0,    0,
               1175,   100,    500,   127)
 
 Flash = namedtuple("Flash",["ManID","Capacity", "MaxPages"])
-Flash_debug = namedtuple("Flash_debug",["ManID_debug","Capacity_debug", "MaxPages_debug"])
 
 flash_format='<hll' #<--------controllare cosa è e a che cosa serve
 
@@ -503,8 +501,8 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.Button("Send Angle", key = "angle-to-mc2"),
-                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (4,1)),sg.T("ms"), sg.Button('Set',key="set-inversion-time")],
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (4,1),default_text='500'),sg.T("ms"),
+                    sg.Button("Send Angle", key = "angle-to-mc2") ],
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
                     sg.Button("Open", key = "read-flash-file"),
@@ -531,8 +529,164 @@ def main():
                     sg.Tab('point14', generate_point(14), key='point14'),  
                     sg.Tab('point15', generate_point(15), key='point15'), 
                             ]])
-                        ]
-                ]
+                        ],
+            ]
+
+    tab4_layout = [
+
+                [sg.T('V BIAS'),sg.In(key='vbias',size=(4,1),readonly=True)],
+                [sg.T('DAC1 00-15')],
+                
+                [sg.T('Slope    '),
+                sg.In(key='slope_1_0',size=(4,1),readonly=True),
+                sg.In(key='slope_1_1',size=(4,1),readonly=True),
+                sg.In(key='slope_1_2',size=(4,1),readonly=True),
+                sg.In(key='slope_1_3',size=(4,1),readonly=True),
+                sg.In(key='slope_1_4',size=(4,1),readonly=True),
+                sg.In(key='slope_1_5',size=(4,1),readonly=True),
+                sg.In(key='slope_1_6',size=(4,1),readonly=True),
+                sg.In(key='slope_1_7',size=(4,1),readonly=True),
+                sg.In(key='slope_1_8',size=(4,1),readonly=True),
+                sg.In(key='slope_1_9',size=(4,1),readonly=True),
+                sg.In(key='slope_1_10',size=(4,1),readonly=True),
+                sg.In(key='slope_1_11',size=(4,1),readonly=True),
+                sg.In(key='slope_1_12',size=(4,1),readonly=True),
+                sg.In(key='slope_1_13',size=(4,1),readonly=True),
+                sg.In(key='slope_1_14',size=(4,1),readonly=True),
+                sg.In(key='slope_1_15',size=(4,1),readonly=True)],
+
+                [sg.T('Intercept'),
+                sg.In(key='intercept_1_0',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_1',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_2',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_3',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_4',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_5',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_6',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_7',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_8',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_9',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_10',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_11',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_12',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_13',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_14',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_15',size=(4,1),readonly=True)],
+
+                [sg.T('DAC1 16-31')],
+                
+                [sg.T('Slope    '),
+                sg.In(key='slope_1_16',size=(4,1),readonly=True),
+                sg.In(key='slope_1_17',size=(4,1),readonly=True),
+                sg.In(key='slope_1_18',size=(4,1),readonly=True),
+                sg.In(key='slope_1_19',size=(4,1),readonly=True),
+                sg.In(key='slope_1_20',size=(4,1),readonly=True),
+                sg.In(key='slope_1_21',size=(4,1),readonly=True),
+                sg.In(key='slope_1_22',size=(4,1),readonly=True),
+                sg.In(key='slope_1_23',size=(4,1),readonly=True),
+                sg.In(key='slope_1_24',size=(4,1),readonly=True),
+                sg.In(key='slope_1_25',size=(4,1),readonly=True),
+                sg.In(key='slope_1_26',size=(4,1),readonly=True),
+                sg.In(key='slope_1_27',size=(4,1),readonly=True),
+                sg.In(key='slope_1_28',size=(4,1),readonly=True),
+                sg.In(key='slope_1_29',size=(4,1),readonly=True),
+                sg.In(key='slope_1_30',size=(4,1),readonly=True),
+                sg.In(key='slope_1_31',size=(4,1),readonly=True)],
+
+                [sg.T('Intercept'),
+                sg.In(key='intercept_1_16',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_17',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_18',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_19',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_20',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_21',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_22',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_23',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_24',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_25',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_26',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_27',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_28',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_29',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_30',size=(4,1),readonly=True),
+                sg.In(key='intercept_1_31',size=(4,1),readonly=True)],
+
+                [sg.T('DAC2 00-15')],
+                
+                [sg.T('Slope    '),
+                sg.In(key='slope_2_0',size=(4,1),readonly=True),
+                sg.In(key='slope_2_1',size=(4,1),readonly=True),
+                sg.In(key='slope_2_2',size=(4,1),readonly=True),
+                sg.In(key='slope_2_3',size=(4,1),readonly=True),
+                sg.In(key='slope_2_4',size=(4,1),readonly=True),
+                sg.In(key='slope_2_5',size=(4,1),readonly=True),
+                sg.In(key='slope_2_6',size=(4,1),readonly=True),
+                sg.In(key='slope_2_7',size=(4,1),readonly=True),
+                sg.In(key='slope_2_8',size=(4,1),readonly=True),
+                sg.In(key='slope_2_9',size=(4,1),readonly=True),
+                sg.In(key='slope_2_10',size=(4,1),readonly=True),
+                sg.In(key='slope_2_11',size=(4,1),readonly=True),
+                sg.In(key='slope_2_12',size=(4,1),readonly=True),
+                sg.In(key='slope_2_13',size=(4,1),readonly=True),
+                sg.In(key='slope_2_14',size=(4,1),readonly=True),
+                sg.In(key='slope_2_15',size=(4,1),readonly=True)],
+
+                [sg.T('Intercept'),
+                sg.In(key='intercept_2_0',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_1',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_2',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_3',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_4',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_5',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_6',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_7',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_8',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_9',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_10',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_11',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_12',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_13',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_14',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_15',size=(4,1),readonly=True)],
+
+                [sg.T('DAC2 16-31')],
+                
+                [sg.T('Slope    '),
+                sg.In(key='slope_2_0',size=(4,1),readonly=True),
+                sg.In(key='slope_2_1',size=(4,1),readonly=True),
+                sg.In(key='slope_2_2',size=(4,1),readonly=True),
+                sg.In(key='slope_2_3',size=(4,1),readonly=True),
+                sg.In(key='slope_2_4',size=(4,1),readonly=True),
+                sg.In(key='slope_2_5',size=(4,1),readonly=True),
+                sg.In(key='slope_2_6',size=(4,1),readonly=True),
+                sg.In(key='slope_2_7',size=(4,1),readonly=True),
+                sg.In(key='slope_2_8',size=(4,1),readonly=True),
+                sg.In(key='slope_2_9',size=(4,1),readonly=True),
+                sg.In(key='slope_2_10',size=(4,1),readonly=True),
+                sg.In(key='slope_2_11',size=(4,1),readonly=True),
+                sg.In(key='slope_2_12',size=(4,1),readonly=True),
+                sg.In(key='slope_2_13',size=(4,1),readonly=True),
+                sg.In(key='slope_2_14',size=(4,1),readonly=True),
+                sg.In(key='slope_2_15',size=(4,1),readonly=True)],
+
+                [sg.T('Intercept'),
+                sg.In(key='intercept_2_16',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_17',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_18',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_19',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_20',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_21',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_22',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_23',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_24',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_25',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_26',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_27',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_28',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_29',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_30',size=(4,1),readonly=True),
+                sg.In(key='intercept_2_31',size=(4,1),readonly=True)],
+            ]    
 
     layout = [
                 [
@@ -545,7 +699,8 @@ def main():
                 [
                         sg.TabGroup([[ sg.Tab('Configuration', tab1_layout),
                             sg.Tab('Sensors', tab2_layout),
-                            sg.Tab('Flash Programming', tab3_layout)
+                            sg.Tab('Flash Programming', tab3_layout),
+                            sg.Tab('DAC Calibration',tab4_layout)
                         ]])
                 ],
             ]     
