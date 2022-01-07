@@ -534,158 +534,158 @@ def main():
 
     tab4_layout = [
 
-                [sg.T('V BIAS'),sg.In(key='vbias',size=(5,1),readonly=True)],
+                [sg.T('V BIAS'),sg.In(key='vbias',size=(5,1),default_text='100',readonly=True)],
                 [sg.T('DAC1 00-15')],
                 
                 [sg.T('Slope    '),
-                sg.In(key='slope_1_0',size=(5,1),readonly=True),
-                sg.In(key='slope_1_1',size=(5,1),readonly=True),
-                sg.In(key='slope_1_2',size=(5,1),readonly=True),
-                sg.In(key='slope_1_3',size=(5,1),readonly=True),
-                sg.In(key='slope_1_4',size=(5,1),readonly=True),
-                sg.In(key='slope_1_5',size=(5,1),readonly=True),
-                sg.In(key='slope_1_6',size=(5,1),readonly=True),
-                sg.In(key='slope_1_7',size=(5,1),readonly=True),
-                sg.In(key='slope_1_8',size=(5,1),readonly=True),
-                sg.In(key='slope_1_9',size=(5,1),readonly=True),
-                sg.In(key='slope_1_10',size=(5,1),readonly=True),
-                sg.In(key='slope_1_11',size=(5,1),readonly=True),
-                sg.In(key='slope_1_12',size=(5,1),readonly=True),
-                sg.In(key='slope_1_13',size=(5,1),readonly=True),
-                sg.In(key='slope_1_14',size=(5,1),readonly=True),
-                sg.In(key='slope_1_15',size=(5,1),readonly=True)],
+                sg.In(key='slope_1_0',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_1',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_2',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_3',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_4',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_5',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_6',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_7',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_8',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_9',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_10',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_11',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_12',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_13',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_14',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_15',size=(5,1),readonly=True,default_text='80')],
 
                 [sg.T('Intercept'),
-                sg.In(key='intercept_1_0',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_1',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_2',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_3',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_4',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_5',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_6',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_7',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_8',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_9',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_10',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_11',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_12',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_13',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_14',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_15',size=(5,1),readonly=True)],
+                sg.In(key='intercept_1_0',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_1',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_2',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_3',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_4',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_5',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_6',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_7',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_8',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_9',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_10',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_11',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_12',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_13',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_14',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_15',size=(5,1),readonly=True,default_text='0')],
 
                 [sg.T('DAC1 16-31')],
                 
                 [sg.T('Slope    '),
-                sg.In(key='slope_1_16',size=(5,1),readonly=True),
-                sg.In(key='slope_1_17',size=(5,1),readonly=True),
-                sg.In(key='slope_1_18',size=(5,1),readonly=True),
-                sg.In(key='slope_1_19',size=(5,1),readonly=True),
-                sg.In(key='slope_1_20',size=(5,1),readonly=True),
-                sg.In(key='slope_1_21',size=(5,1),readonly=True),
-                sg.In(key='slope_1_22',size=(5,1),readonly=True),
-                sg.In(key='slope_1_23',size=(5,1),readonly=True),
-                sg.In(key='slope_1_24',size=(5,1),readonly=True),
-                sg.In(key='slope_1_25',size=(5,1),readonly=True),
-                sg.In(key='slope_1_26',size=(5,1),readonly=True),
-                sg.In(key='slope_1_27',size=(5,1),readonly=True),
-                sg.In(key='slope_1_28',size=(5,1),readonly=True),
-                sg.In(key='slope_1_29',size=(5,1),readonly=True),
-                sg.In(key='slope_1_30',size=(5,1),readonly=True),
-                sg.In(key='slope_1_31',size=(5,1),readonly=True)],
+                sg.In(key='slope_1_16',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_17',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_18',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_19',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_20',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_21',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_22',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_23',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_24',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_25',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_26',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_27',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_28',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_29',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_30',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_1_31',size=(5,1),readonly=True,default_text='80')],
 
                 [sg.T('Intercept'),
-                sg.In(key='intercept_1_16',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_17',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_18',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_19',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_20',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_21',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_22',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_23',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_24',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_25',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_26',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_27',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_28',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_29',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_30',size=(5,1),readonly=True),
-                sg.In(key='intercept_1_31',size=(5,1),readonly=True)],
+                sg.In(key='intercept_1_16',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_17',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_18',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_19',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_20',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_21',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_22',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_23',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_24',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_25',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_26',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_27',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_28',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_29',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_30',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_1_31',size=(5,1),readonly=True,default_text='0')],
 
                 [sg.T('DAC2 00-15')],
                 
                 [sg.T('Slope    '),
-                sg.In(key='slope_2_0',size=(5,1),readonly=True),
-                sg.In(key='slope_2_1',size=(5,1),readonly=True),
-                sg.In(key='slope_2_2',size=(5,1),readonly=True),
-                sg.In(key='slope_2_3',size=(5,1),readonly=True),
-                sg.In(key='slope_2_4',size=(5,1),readonly=True),
-                sg.In(key='slope_2_5',size=(5,1),readonly=True),
-                sg.In(key='slope_2_6',size=(5,1),readonly=True),
-                sg.In(key='slope_2_7',size=(5,1),readonly=True),
-                sg.In(key='slope_2_8',size=(5,1),readonly=True),
-                sg.In(key='slope_2_9',size=(5,1),readonly=True),
-                sg.In(key='slope_2_10',size=(5,1),readonly=True),
-                sg.In(key='slope_2_11',size=(5,1),readonly=True),
-                sg.In(key='slope_2_12',size=(5,1),readonly=True),
-                sg.In(key='slope_2_13',size=(5,1),readonly=True),
-                sg.In(key='slope_2_14',size=(5,1),readonly=True),
-                sg.In(key='slope_2_15',size=(5,1),readonly=True)],
+                sg.In(key='slope_2_0',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_1',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_2',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_3',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_4',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_5',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_6',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_7',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_8',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_9',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_10',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_11',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_12',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_13',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_14',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_15',size=(5,1),readonly=True,default_text='80')],
 
                 [sg.T('Intercept'),
-                sg.In(key='intercept_2_0',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_1',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_2',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_3',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_4',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_5',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_6',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_7',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_8',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_9',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_10',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_11',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_12',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_13',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_14',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_15',size=(5,1),readonly=True)],
+                sg.In(key='intercept_2_0',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_1',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_2',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_3',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_4',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_5',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_6',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_7',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_8',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_9',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_10',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_11',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_12',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_13',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_14',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_15',size=(5,1),readonly=True,default_text='0')],
 
                 [sg.T('DAC2 16-31')],
                 
                 [sg.T('Slope    '),
-                sg.In(key='slope_2_16',size=(5,1),readonly=True),
-                sg.In(key='slope_2_17',size=(5,1),readonly=True),
-                sg.In(key='slope_2_18',size=(5,1),readonly=True),
-                sg.In(key='slope_2_19',size=(5,1),readonly=True),
-                sg.In(key='slope_2_20',size=(5,1),readonly=True),
-                sg.In(key='slope_2_21',size=(5,1),readonly=True),
-                sg.In(key='slope_2_22',size=(5,1),readonly=True),
-                sg.In(key='slope_2_23',size=(5,1),readonly=True),
-                sg.In(key='slope_2_24',size=(5,1),readonly=True),
-                sg.In(key='slope_2_25',size=(5,1),readonly=True),
-                sg.In(key='slope_2_26',size=(5,1),readonly=True),
-                sg.In(key='slope_2_27',size=(5,1),readonly=True),
-                sg.In(key='slope_2_28',size=(5,1),readonly=True),
-                sg.In(key='slope_2_29',size=(5,1),readonly=True),
-                sg.In(key='slope_2_30',size=(5,1),readonly=True),
-                sg.In(key='slope_2_31',size=(5,1),readonly=True)],
+                sg.In(key='slope_2_16',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_17',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_18',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_19',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_20',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_21',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_22',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_23',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_24',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_25',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_26',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_27',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_28',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_29',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_30',size=(5,1),readonly=True,default_text='80'),
+                sg.In(key='slope_2_31',size=(5,1),readonly=True,default_text='80')],
 
                 [sg.T('Intercept'),
-                sg.In(key='intercept_2_16',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_17',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_18',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_19',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_20',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_21',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_22',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_23',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_24',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_25',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_26',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_27',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_28',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_29',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_30',size=(5,1),readonly=True),
-                sg.In(key='intercept_2_31',size=(5,1),readonly=True)],
+                sg.In(key='intercept_2_16',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_17',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_18',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_19',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_20',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_21',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_22',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_23',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_24',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_25',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_26',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_27',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_28',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_29',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_30',size=(5,1),readonly=True,default_text='0'),
+                sg.In(key='intercept_2_31',size=(5,1),readonly=True,default_text='0')],
             ]    
 
     layout = [
@@ -723,7 +723,7 @@ def main():
                 if buffer: decode_input_data(window,buffer)
     
         elif event == "Instruction":
-            sg.popup('In debug mode the voltages for the DACs need to be as a decimal number\nThe equation to convert voltage in decimal is\nDecimal = Voltage x 204.8 / 16384\nExample: 100 V --> 8000\n',title = 'Debug Mode')
+            sg.popup('In debug mode the voltages for the DACs need to be a decimal number\nThe equation to convert voltage in decimal is\nVoltage = Decimal x 0.0125\nExample: 100 V --> 8000\n',title = 'Debug Mode')
         
         elif event == "Connect":
             serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
@@ -871,32 +871,55 @@ def main():
             try:
                 table = int(window['-table-'].get())
                 page = int(window['-page-'].get())
-
+                vbias = float(window['vbias'].get())
+                
+                #metto tutti i coefficienti di slope dentro una lista
+                slope = []
+                for dac_slope in range(2):
+                    for slope_index in range(32):
+                        slope.append(float(window["slope_{0}_{1}".format(dac_slope+1,slope_index)].get()))
+                
+                #metto tutti i termini di intercept dentro una lista
+                intercept = []
+                for dac_intercept in range(2):
+                    for intercept_index in range(32):
+                        intercept.append(float(window["intercept_{0}_{1}".format(dac_intercept+1,intercept_index)].get()))
+                
                 for i in range(16): #16 sono i punti
+                    
                     point_data = []
                     for index in range(32):
-                        #(vBias-voltage)  / v_lsb --> decimal value for DAC
-                        # voltage     = window["dac1_{0}_{1}".format(i,index)].get() #prendo il valore contenuto nella cella e lo metto in voltage
-                        # voltage     = float(voltage) #converto voltage in float
-                        # dac_decimal = round((vBias - voltage) / v_lsb,2) #
-                        dac_decimal   = int(window["dac1_{0}_{1}".format(i,index)].get())
-                        if dac_decimal < 0 or dac_decimal > 16384:
-                            raise ValueError("Point {}: DAC1 channel {} out of range".format(i,index))
-                        point_data.append(int(dac_decimal))
+
+                        if values['debug'] == True:
+
+                            dac_decimal  = int(window["dac1_{0}_{1}".format(i,index)].get()) #prendo il valore dentro la finestra e lo trasformo in intero
+                            if dac_decimal < 0 or dac_decimal > 15999: #16384
+                                raise ValueError("Point {}: DAC1 channel {} out of range".format(i,index))
+                            point_data.append(dac_decimal)
+                        
+                        else:
+                            voltage     = float(window["dac1_{0}_{1}".format(i,index)].get())
+                            dac_decimal = round((voltage + vbias)*slope[index]+intercept[index])
+                            point_data.append(dac_decimal) 
                     
                     for index in range(32):
-                        #(vBias-voltage)  / v_lsb --> decimal value for DAC
-                        # voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
-                        # dac_decimal = round((vBias - voltage) / v_lsb,2)
-                        dac_decimal   = int(window["dac2_{0}_{1}".format(i,index)].get())
-                        if dac_decimal < 0 or dac_decimal > 16384:
-                            raise ValueError("Point {}: DAC2 channel {} out of range".format(i,index))
-                        point_data.append(int(dac_decimal))
+
+                        if values['debug'] == True:
+                            
+                            dac_decimal   = int(window["dac2_{0}_{1}".format(i,index)].get())
+                            if dac_decimal < 0 or dac_decimal > 15999:
+                                raise ValueError("Point {}: DAC2 channel {} out of range".format(i,index))
+                            point_data.append(int(dac_decimal))
+                        
+                        else:
+                            voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
+                            dac_decimal = round((voltage + vbias)*slope[index]+intercept[index])
+                            point_data.append(dac_decimal) 
 
                     rf_data=[]
-                    for index in range(4): # 4 index sono le righe delle schede rf, i ricordo che 'i' sono i punti del for precedente
-                        tmp_rf=window["rf_{0}_{1}".format(i,index)].get()
-                        if len(tmp_rf) != 50: # prima era 25, non ricordo perché, ora metto 50 perché i byte di ogni riga sono 
+                    for rf_index in range(4): # 4 index sono le righe delle schede rf, ricordo che 'i' sono i punti del for precedente
+                        tmp_rf=window["rf_{0}_{1}".format(i,rf_index)].get()
+                        if len(tmp_rf) != 50: # prima era 25, non ricordo perché, ora metto 50 perché i byte di ogni riga sono 50 
                             raise ValueError("Point {}: RF channel {} invalid data".format(i,index))
                         rf_data += tmp_rf
 
@@ -904,7 +927,7 @@ def main():
                     log("write point {} of table {} ".format(point,table))
                     log("|".join(map(str,point_data)))
 
-                    data = R_WPOINT + pack('>2H', table,point) +  pack('>64H', *point_data) #metto dentro data la richesta di scrittura della flash, l'indirzzo da leggere e i punti formattati
+                    data = R_WPOINT + pack('<2H', table,point) +  pack('>64H', *point_data) #metto dentro data la richesta di scrittura della flash, l'indirzzo da leggere e i punti formattati
                     
                     q = 0
                     for q in range(100):
@@ -951,6 +974,20 @@ def main():
         elif event == "ReadPoints":
             table = int(window['-table-'].get())
             page = int(window['-page-'].get())
+            vbias = float(window['vbias'].get())
+
+            #metto tutti i coefficienti di slope dentro una lista
+            slope = []
+            for dac_slope in range(2):
+                for slope_index in range(32):
+                    slope.append(float(window["slope_{0}_{1}".format(dac_slope+1,slope_index)].get()))
+                
+                #metto tutti i termini di intercept dentro una lista
+            intercept = []
+            for dac_intercept in range(2):
+                for intercept_index in range(32):
+                    intercept.append(float(window["intercept_{0}_{1}".format(dac_intercept+1,intercept_index)].get()))
+
             flash_table_data=[]
             #raw_data=window["-flash-data-"]
             for i in range(16):
@@ -959,26 +996,39 @@ def main():
                 sleep(0.3)
                 point = (page*16)+i
                 log("ask point  {} of table {}".format(point,table))
-                data=R_RPOINT + pack('>2H', table,point) #metto in data la richiesta di lettura della flash e l'indirizzo
+                data=R_RPOINT + pack('<2H',table,point) #metto in data la richiesta di lettura della flash e l'indirizzo --> da controllare, forse sta qua il bug sulla scheda
+                
+                print(data) # PER TEST!!!!!
+                
                 serialChannel.write(data) #mando la richiesta al micro 1
                 serialChannel.flush() #svuoto il buffer
                 sleep(0.3) #aspetto 300 ms
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
-                log([len(buffer),buffer])
-                point_data_DAC=unpack_from(">68H",buffer, offset=2) #spacchetto i dati e li metto nella lista point_data
-                print(point_data_DAC) #stampo a monitor i dati dei DAC (es. 8000 --> 100 volt)
+                log([len(buffer),buffer]) #visualizzo il valore raw del buffer
+                
+                point_data_DAC=unpack_from(">68H",buffer, offset=2) #spacchetto i dati in unsegned short ordnati big endian e li metto nella lista point_data
+                print(point_data_DAC) #stampo a monitor i dati dei DAC in valore decimale (es. 8000 --> 100 volt)
 
                 # questo for gestisce i dati in modalità debug, quindi dac_decimal
-                for p in range(32):
-                    # dac_decimal = float(point_data[p])
-                    # dac_decimal *= v_lsb
-                    # voltage     = round(vBias - dac_decimal,2)
-                    window["dac1_{0}_{1}".format(i,p)].update(point_data_DAC[p]) 
-                    # dac_decimal = point_data[p+32]
-                    # dac_decimal *= v_lsb
-                    # voltage     = round(vBias - dac_decimal,2)
-                    window["dac2_{0}_{1}".format(i,p)].update(point_data_DAC[p+32])  # al posto di point_data[p+32] c'era voltage
-                
+                if values['debug'] == True:
+                    for p1 in range(32):
+                        window["dac1_{0}_{1}".format(i,p1)].update(point_data_DAC[p1])
+                        window.Refresh()
+                    for p2 in range(32):
+                        window["dac2_{0}_{1}".format(i,p2)].update(point_data_DAC[p2+32])
+                        window.Refresh()
+                else:
+                    for p3 in range(32):
+                        dac_decimal = float(point_data_DAC[p3])
+                        voltage = round((dac_decimal - intercept[p3])*(1/slope[p3])-vbias,2)
+                        window["dac1_{0}_{1}".format(i,p3)].update(voltage)
+                        window.Refresh()
+                    for p4 in range(32):
+                        dac_decimal = float(point_data_DAC[p4+32])
+                        voltage = round((dac_decimal - intercept[p4+32])*(1/slope[p4+32])-vbias,2)
+                        window["dac2_{0}_{1}".format(i,p4)].update(voltage)
+                        window.Refresh()
+
                 window["rf_{0}_{1}".format(i,0)].update(str(buffer[130:155]))
                 window["rf_{0}_{1}".format(i,1)].update(str(buffer[155:180]))
                 window["rf_{0}_{1}".format(i,2)].update(str(buffer[180:205]))
