@@ -132,11 +132,11 @@ def decode_input_data(window,data):
 
 def receiveBuffer(serialChannel):
     commands={
-        MONITOR_DATA    : {"size":15, "start":START_RESPONSE},
+        MONITOR_DATA    : {"size":15, "start":START_RESPONSE}, # le parentesi graffe sono i "set" che insieme a liste e tuple rapprensentano le strutture dati di python, i set servono per mettere dentrouna variabile più oggetti
         READ_CONFIG     : {"size":112, "start":START_RESPONSE},
         R_RPOINT        : {"size":230, "start":START_RESPONSE},
         FLASH_INFO      : {"size":12, "start":START_RESPONSE},
-        R_ANGLE_TO_MC2  : {"size":7, "start":START_RESPONSE},
+        R_ANGLE_TO_MC2  : {"size":9, "start":START_RESPONSE}, #cambiato da 7 a 9 a causa dei due byte per il tempo di inversione
         R_EPAGE         :  {"size":4, "start":START_RESPONSE},
         R_WPOINT        :  {"size":1, "start":START_RESPONSE},
     }
@@ -501,7 +501,7 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (4,1),default_text='500'),sg.T("ms"),
+                    sg.T("Inversion Time"), sg.In(key='-inversionTime-',size = (4,1),default_text='500'),sg.T("ms"),
                     sg.Button("Send Angle", key = "angle-to-mc2") ],
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
@@ -723,7 +723,7 @@ def main():
                 if buffer: decode_input_data(window,buffer)
     
         elif event == "Instruction":
-            sg.popup('In debug mode the voltages for the DACs need to be a decimal number\nThe equation to convert voltage in decimal is\nVoltage = Decimal x 0.0125\nExample: 100 V --> 8000\n',title = 'Debug Mode')
+            sg.popup('In debug mode the voltages for the DACs need to be a decimal number\nThe equation for convert voltage to decimal is\nVoltage = Decimal x 0.0125\nExample: 100 V --> 8000\n',title = 'Debug Mode')
         
         elif event == "Connect":
             serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
@@ -786,8 +786,9 @@ def main():
     
             table=window['-table-mc2-'].get()
             point=window['-angles-mc2-'].get()
+            inv_time=['-inversionTime-'].get()
             print("table {0}, point {1}".format(table,point))  # {0},{1} indicano dei simboli sostituibili dai valori posti come anrgomento dnetro format print("When you multiply {0} and {1} or {0} and {2}, the result is {0}".format(0,1,2))
-            data=R_ANGLE_TO_MC2 + pack('<2h', table,point)
+            data=R_ANGLE_TO_MC2 + pack('>3H', table,point,inv_time)
             print(data)
             serialChannel.write(data)
             serialChannel.write(b'\n')
@@ -867,6 +868,7 @@ def main():
                     file.write(",")
                 file.write("\r\n")
             file.close()    
+        
         elif event == "WritePoints":
             try:
                 table = int(window['-table-'].get())
@@ -927,7 +929,7 @@ def main():
                     log("write point {} of table {} ".format(point,table))
                     log("|".join(map(str,point_data)))
 
-                    data = R_WPOINT + pack('<2H', table,point) +  pack('>64H', *point_data) #metto dentro data la richesta di scrittura della flash, l'indirzzo da leggere e i punti formattati
+                    data = R_WPOINT + pack('>2H', table,point) +  pack('>64H', *point_data) #metto dentro data la richesta di scrittura della flash, l'indirzzo da leggere e i punti formattati
                     
                     q = 0
                     for q in range(100):
@@ -936,7 +938,8 @@ def main():
                     
                     data += b'\n'
                     
-                    #print (data)
+                    print (data)
+
                     serialChannel.write(data[0:30])
                     serialChannel.flush()
                     sleep(0.3)
@@ -963,8 +966,9 @@ def main():
                     
                     if buffer :
                         log([len(buffer),buffer]) 
-                        elapsed = unpack_from("<1c",buffer, offset=1)
+                        elapsed = unpack_from(">1c",buffer, offset=1)
                         window['point{0}'.format(i)].update(title='*{0}*'.format(i))
+                    window.Refresh()
 
                 window['WritePoints'].update(disabled=True)
             except ValueError as e: 
@@ -982,7 +986,7 @@ def main():
                 for slope_index in range(32):
                     slope.append(float(window["slope_{0}_{1}".format(dac_slope+1,slope_index)].get()))
                 
-                #metto tutti i termini di intercept dentro una lista
+            #metto tutti i termini di intercept dentro una lista
             intercept = []
             for dac_intercept in range(2):
                 for intercept_index in range(32):
@@ -996,7 +1000,7 @@ def main():
                 sleep(0.3)
                 point = (page*16)+i
                 log("ask point  {} of table {}".format(point,table))
-                data=R_RPOINT + pack('<2H',table,point) #metto in data la richiesta di lettura della flash e l'indirizzo --> da controllare, forse sta qua il bug sulla scheda
+                data=R_RPOINT + pack('>2H',table,point) #metto in data la richiesta di lettura della flash e l'indirizzo --> da controllare, forse sta qua il bug sulla scheda
                 
                 print(data) # PER TEST!!!!!
                 
@@ -1044,7 +1048,7 @@ def main():
                 window['elapsed'].update("")
                 #window['-flash-data-'].update("".rstrip())
                 log("erasing page  {} of table {}".format(page,table))
-                data=R_ERASE_4K + pack('<2h', table,page)
+                data=R_ERASE_4K + pack('>2h', table,page)
                 serialChannel.write(data)
                 serialChannel.write(END_COMMAND)
                 serialChannel.flush()
