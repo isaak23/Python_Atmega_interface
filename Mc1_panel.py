@@ -317,7 +317,7 @@ def main():
                 ]
 
     
-    window = sg.Window("Control Panel", layout, finalize=True)
+    window = sg.Window("Control Panel 0.9_pd", layout, finalize=True)
 
     serialChannel=Serial()
     # Run the Event Loop
@@ -426,20 +426,34 @@ def main():
                 for i in range(16):
                     point_data = []
                     for index in range(32):
+                        #versione originale
                         #(vBias-voltage)  / v_lsb --> decimal value for DAC
                         # voltage     = window["dac1_{0}_{1}".format(i,index)].get() #prendo il valore contenuto nella cella e lo metto in voltage
                         # voltage     = float(voltage) #converto voltage in float
                         # dac_decimal = round((vBias - voltage) / v_lsb,2) #
+                        
+                        #versione con decimale
                         dac_decimal   = int(window["dac1_{0}_{1}".format(i,index)].get())
+                        
+                        # voltage     = window["dac1_{0}_{1}".format(i,index)].get() #prendo il valore contenuto nella cella e lo metto in voltage
+                        # voltage     = float(voltage) #converto voltage in float
+                        # dac_decimal = round(7970+80.152*voltage) #dac_decimal è dato da il polinomio interpolante che gà comprende il bias di 100 volt
                         if dac_decimal < 0 or dac_decimal > 16384:
                             raise ValueError("Point {}: DAC1 channel {} out of range".format(i,index))
                         point_data.append(int(dac_decimal))
                     
                     for index in range(32):
+                        #verione originale
                         #(vBias-voltage)  / v_lsb --> decimal value for DAC
                         # voltage     = float(window["dac2_{0}_{1}".format(i,index)].get())
                         # dac_decimal = round((vBias - voltage) / v_lsb,2)
+                        
+                        #versione con solo il decimale
                         dac_decimal   = int(window["dac2_{0}_{1}".format(i,index)].get())
+                        
+                        # voltage     = window["dac2_{0}_{1}".format(i,index)].get() #prendo il valore contenuto nella cella e lo metto in voltage
+                        # voltage     = float(voltage) #converto voltage in float
+                        # dac_decimal = round(7970+80.152*voltage) #dac_decimal è dato da il polinomio interpolante che gà comprende il bias di 100 volt
                         if dac_decimal < 0 or dac_decimal > 16384:
                             raise ValueError("Point {}: DAC2 channel {} out of range".format(i,index))
                         point_data.append(int(dac_decimal))
