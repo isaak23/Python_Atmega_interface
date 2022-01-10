@@ -132,11 +132,11 @@ def decode_input_data(window,data):
 
 def receiveBuffer(serialChannel):
     commands={
-        MONITOR_DATA    : {"size":15, "start":START_RESPONSE}, # le parentesi graffe sono i "set" che insieme a liste e tuple rapprensentano le strutture dati di python, i set servono per mettere dentrouna variabile più oggetti
+        MONITOR_DATA    : {"size":15, "start":START_RESPONSE}, # le parentesi graffe sono i "set" che insieme a liste e tuple rapprensentano le strutture dati di python, i set servono per mettere dentro una variabile più oggetti
         READ_CONFIG     : {"size":112, "start":START_RESPONSE},
         R_RPOINT        : {"size":230, "start":START_RESPONSE},
         FLASH_INFO      : {"size":12, "start":START_RESPONSE},
-        R_ANGLE_TO_MC2  : {"size":9, "start":START_RESPONSE}, #cambiato da 7 a 9 a causa dei due byte per il tempo di inversione
+        R_ANGLE_TO_MC2  : {"size":8, "start":START_RESPONSE}, #cambiato da 7 a 9 a causa dei due byte per il tempo di inversione
         R_EPAGE         :  {"size":4, "start":START_RESPONSE},
         R_WPOINT        :  {"size":1, "start":START_RESPONSE},
     }
@@ -501,7 +501,7 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.T("Inversion Time"), sg.In(key='-inversionTime-',size = (4,1),default_text='500'),sg.T("ms"),
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (4,1),default_text='500'),sg.T("ms"),
                     sg.Button("Send Angle", key = "angle-to-mc2") ],
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
@@ -728,7 +728,7 @@ def main():
         elif event == "Connect":
             serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
             baudRate = window["-baudrate-"].get()
-            serialChannel = Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
+            serialChannel = Serial(serialPort , baudRate, timeout=None, xonxoff=True, bytesize = EIGHTBITS, writeTimeout=0) #ensure non-blocking #serialChannel = Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
             if serialChannel.is_open :
                for i in range(255):
                    serialChannel.write(b'\n')
@@ -760,6 +760,7 @@ def main():
             serialChannel.write(END_COMMAND)
             buffer = receiveBuffer(serialChannel)
             if buffer: decode_input_data(window,buffer)
+            window.Refresh()
 
         elif event == "WRITE-CONFIG":
             config=build_config_from_ui(window)
@@ -786,14 +787,18 @@ def main():
     
             table=window['-table-mc2-'].get()
             point=window['-angles-mc2-'].get()
-            inv_time=['-inversionTime-'].get()
+            inv_time=round((int(window["inversionTime"].get()))/100)
             print("table {0}, point {1}".format(table,point))  # {0},{1} indicano dei simboli sostituibili dai valori posti come anrgomento dnetro format print("When you multiply {0} and {1} or {0} and {2}, the result is {0}".format(0,1,2))
-            data=R_ANGLE_TO_MC2 + pack('>3H', table,point,inv_time)
-            print(data)
+            print(inv_time)
+            data=R_ANGLE_TO_MC2 + pack('>2H', table,point)+ pack('>1B',inv_time)
+            
+            for y in range(len(data)):
+                print(hex(data[y]), end=" ")
+            
             serialChannel.write(data)
             serialChannel.write(b'\n')
             serialChannel.flush() # svuoto il buffer
-
+            window.Refresh()
             #struct.pack(format, v1, v2, ...)
             #Return a bytes object containing the values v1, v2, … packed according to the format string format.
             #The arguments must match the values required by the format exactly.
@@ -1008,8 +1013,16 @@ def main():
                 serialChannel.flush() #svuoto il buffer
                 sleep(0.3) #aspetto 300 ms
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
-                log([len(buffer),buffer]) #visualizzo il valore raw del buffer
                 
+                #visualize the buffer in hex numer
+                buffer_int = unpack_from(">231B",buffer)
+                b_int=[]
+                for z in range(len(buffer_int)):
+                    b_int.append(hex(buffer_int[z]))
+
+                log([len(b_int),b_int])
+                
+                #visualize the buffer in decimal numbers
                 point_data_DAC=unpack_from(">68H",buffer, offset=2) #spacchetto i dati in unsegned short ordnati big endian e li metto nella lista point_data
                 print(point_data_DAC) #stampo a monitor i dati dei DAC in valore decimale (es. 8000 --> 100 volt)
 
@@ -1049,6 +1062,7 @@ def main():
                 #window['-flash-data-'].update("".rstrip())
                 log("erasing page  {} of table {}".format(page,table))
                 data=R_ERASE_4K + pack('>2h', table,page)
+                print(data)                                                           # per test
                 serialChannel.write(data)
                 serialChannel.write(END_COMMAND)
                 serialChannel.flush()
@@ -1132,3 +1146,31 @@ if __name__ == '__main__':
 # >>> dac_data=buffer[2:130]
 # >>> len(dac_data)
 # 128
+
+
+# >>> a.encode('utf-8').hex()
+# '421f'
+# >>> a='\x1f\x40'
+# >>> a.encode('utf-8').hex()
+# '1f40'
+# >>> a=b'\x42\x1f'
+# >>> a.encode('utf-8').hex()
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# AttributeError: 'bytes' object has no attribute 'encode'
+# >>> str(a)
+# "b'B\\x1f'"
+# >>>
+# >>> chr(a)
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# TypeError: an integer is required (got type bytes)
+# >>> a = b'B\x1f
+# >>> a.decode('utf-8')
+# 'B\x1f'
+# >>> b=a.decode('utf-8')
+# >>> b.encode('utf-8').hex()
+# '421f'
+
+#per stampare tutto in linea con uno spazio
+# print(hex(buffer_int[i]),end=" ")
