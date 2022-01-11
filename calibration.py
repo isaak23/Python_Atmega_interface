@@ -89,7 +89,7 @@ def main():
                 plt.scatter(ctable["DAC1_2"],ctable["Voltage_Dec"],color='g') #ristampo i vfalori dei punti che ho misurato
                 y_predict = model.params[0] + model.params[1]*ctable['DAC1_2'] #metto dentro y_predict i valori con i coefficienti calcolati dal modello
                 plt.plot(ctable["DAC1_2"],y_predict, linewidth=1,color='r') #stampo la linea della retta interpolata
-
+                plt.title("calibration")
                 draw_figure(_VARS['window']['figCanvas'].TKCanvas, fig)
 
 
