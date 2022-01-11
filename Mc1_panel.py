@@ -83,6 +83,8 @@ config=Config(   0,    0,    0,    0,    0,     0,    0,    0,
               4200,   4300,   4400,
               1175,   100,    500,   127)
 
+text_debug = 'In debug mode the voltages for the DACs need to be a decimal number\nThe equation for convert voltage to decimal is\nVoltage = Decimal x 0.0125\nExample: 100 V --> 8000\n'
+
 Flash = namedtuple("Flash",["ManID","Capacity", "MaxPages"])
 
 flash_format='<hll' #<--------controllare cosa è e a che cosa serve
@@ -723,7 +725,7 @@ def main():
                 if buffer: decode_input_data(window,buffer)
     
         elif event == "Instruction":
-            sg.popup('In debug mode the voltages for the DACs need to be a decimal number\nThe equation for convert voltage to decimal is\nVoltage = Decimal x 0.0125\nExample: 100 V --> 8000\n',title = 'Debug Mode')
+            sg.popup(text_debug,title = 'Debug Mode')
         
         elif event == "Connect":
             serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
@@ -823,7 +825,7 @@ def main():
                     file.close()
                     index=0
 
-                    window["vbias"].update(lines[0])
+                    window["vbias"].update(lines[0].strip())
 
                     tmp_data=lines[1].strip().split(",")
                     for i in range(32):
@@ -860,6 +862,30 @@ def main():
             #             file.write(line[1])
             #             file.write("\r\n")
             #         file.close()
+            
+            # write bias
+            file.write(str(window["vbias"].get()))
+            #write slope
+            file.write("\n")
+            for slope_index in range(32):
+                file.write(str(window["slope_{0}_{1}".format(1,slope_index)].get()))
+                file.write(",")
+            for slope_index in range(32):
+                file.write(str(window["slope_{0}_{1}".format(2,slope_index)].get()))
+                if(slope_index!=31):
+                    file.write(",")
+            file.write("\n")
+            
+            #write intercept
+            for intercept_index in range(32):
+                file.write(str(window["intercept_{0}_{1}".format(1,intercept_index)].get()))
+                file.write(",")
+            for intercept_index in range(32):
+                file.write(str(window["intercept_{0}_{1}".format(2,intercept_index)].get()))
+                if(intercept_index!=31):
+                    file.write(",")
+            file.write("\n")
+
             for i in range(16):
                 point_data = []
                 for index in range(32):
@@ -870,8 +896,10 @@ def main():
                     file.write(",")
                 for index in range(4):
                     file.write(str(window["rf_{0}_{1}".format(i,index)].get()))
-                    file.write(",")
-                file.write("\r\n")
+                    if(index!=3):
+                        file.write(",")
+                if (i!=15):
+                    file.write("\n")
             file.close()    
         
         elif event == "WritePoints":
@@ -1034,6 +1062,12 @@ def main():
                     for p2 in range(32):
                         window["dac2_{0}_{1}".format(i,p2)].update(point_data_DAC[p2+32])
                         window.Refresh()
+
+                    window["rf_{0}_{1}".format(i,0)].update(str(buffer[130:155]))
+                    window["rf_{0}_{1}".format(i,1)].update(str(buffer[155:180]))
+                    window["rf_{0}_{1}".format(i,2)].update(str(buffer[180:205]))
+                    window["rf_{0}_{1}".format(i,3)].update(str(buffer[205:230]))
+                
                 else:
                     for p3 in range(32):
                         dac_decimal = float(point_data_DAC[p3])
@@ -1046,10 +1080,15 @@ def main():
                         window["dac2_{0}_{1}".format(i,p4)].update(voltage)
                         window.Refresh()
 
-                window["rf_{0}_{1}".format(i,0)].update(str(buffer[130:155]))
-                window["rf_{0}_{1}".format(i,1)].update(str(buffer[155:180]))
-                window["rf_{0}_{1}".format(i,2)].update(str(buffer[180:205]))
-                window["rf_{0}_{1}".format(i,3)].update(str(buffer[205:230]))
+                    #print the RF strings without the binary hex format
+                    rf_flow_1 = str(buffer[130:155]).replace('\\x','').replace('\'','').replace('b','',1)
+                    window["rf_{0}_{1}".format(i,0)].update(rf_flow_1)
+                    rf_flow_2 = str(buffer[155:180]).replace('\\x','').replace('\'','').replace('b','',1)
+                    window["rf_{0}_{1}".format(i,1)].update(rf_flow_2)
+                    rf_flow_3 = str(buffer[180:205]).replace('\\x','').replace('\'','').replace('b','',1)
+                    window["rf_{0}_{1}".format(i,2)].update(rf_flow_3)
+                    rf_flow_4 = str(buffer[205:230]).replace('\\x','').replace('\'','').replace('b','',1)
+                    window["rf_{0}_{1}".format(i,3)].update(rf_flow_4)
                 
                 
                 window['point{0}'.format(i)].update(title='point{0}'.format(i))
