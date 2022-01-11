@@ -86,10 +86,23 @@ def main():
                 sg.Print(model.summary())
                 sg.Print(model.params)
 
-                plt.scatter(ctable["DAC1_2"],ctable["Voltage_Dec"],color='g') #ristampo i vfalori dei punti che ho misurato
+                plt.plot(ctable["DAC1_2"],ctable["Voltage_Dec"],'yo:',label="measured values") #ristampo i valori dei punti che ho misurato bo: vuol dire b --> blue color,o--> round points, : -->linea 
+                
+                #for see the values of the measured numbers on the points
+                for x,y in zip(ctable["DAC1_2"],ctable["Voltage_Dec"]):
+                    label = "{:.2f}".format(x) #se metto x mi appare il vaore delle x, se metto y mi appare il valore delle y
+                    plt.annotate(label, # this is the text
+                    (x,y), # these are the coordinates to position the label
+                    textcoords="offset points", # how to position the text
+                    xytext=(0,10), # distance from text to points (x,y)
+                    ha='center') # horizontal alignment can be left, right or center
+                
                 y_predict = model.params[0] + model.params[1]*ctable['DAC1_2'] #metto dentro y_predict i valori con i coefficienti calcolati dal modello
-                plt.plot(ctable["DAC1_2"],y_predict, linewidth=1,color='r') #stampo la linea della retta interpolata
+                plt.plot(ctable["DAC1_2"],y_predict, linewidth=1,color='r',label="fitted values") #stampo la linea della retta interpolata
                 plt.title("calibration")
+                plt.xlabel("measured Values")
+                plt.ylabel("decimal voltage")
+                plt.legend() #add a legend, thje names are in the label parameters of each graph
                 draw_figure(_VARS['window']['figCanvas'].TKCanvas, fig)
 
 
