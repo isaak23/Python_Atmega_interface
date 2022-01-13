@@ -971,8 +971,13 @@ def main():
                     
                     data += b'\n'
                     
-                    print (data)
-
+                    print(data)
+                    
+                    # for sw in range(len(data)):
+                    #     serialChannel.write(data[sw])
+                    #     sleep(0.1)
+                    # serialChannel.flush()
+                    #prima di cancellare questi dati vedere se col for va meglio                    
                     serialChannel.write(data[0:30])
                     serialChannel.flush()
                     sleep(0.3)
@@ -995,6 +1000,7 @@ def main():
                     serialChannel.flush()
                     sleep(0.3)
                     serialChannel.flush()
+
                     buffer = receiveBuffer(serialChannel)
                     
                     if buffer :
@@ -1043,7 +1049,7 @@ def main():
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
                 
                 #visualize the buffer in hex numer
-                buffer_int = unpack_from(">231B",buffer)
+                buffer_int = unpack_from(">230B",buffer)
                 b_int=[]
                 for z in range(len(buffer_int)):
                     b_int.append(hex(buffer_int[z]))
@@ -1051,7 +1057,7 @@ def main():
                 log([len(b_int),b_int])
                 
                 #visualize the buffer in decimal numbers
-                point_data_DAC=unpack_from(">68H",buffer, offset=2) #spacchetto i dati in unsegned short ordnati big endian e li metto nella lista point_data
+                point_data_DAC=unpack_from(">68H",buffer, offset=1) #spacchetto i dati in unsegned short ordnati big endian e li metto nella lista point_data
                 print(point_data_DAC) #stampo a monitor i dati dei DAC in valore decimale (es. 8000 --> 100 volt)
 
                 # questo for gestisce i dati in modalità debug, quindi dac_decimal
@@ -1063,10 +1069,10 @@ def main():
                         window["dac2_{0}_{1}".format(i,p2)].update(point_data_DAC[p2+32])
                         window.Refresh()
 
-                    window["rf_{0}_{1}".format(i,0)].update(str(buffer[130:155]))
-                    window["rf_{0}_{1}".format(i,1)].update(str(buffer[155:180]))
-                    window["rf_{0}_{1}".format(i,2)].update(str(buffer[180:205]))
-                    window["rf_{0}_{1}".format(i,3)].update(str(buffer[205:230]))
+                    window["rf_{0}_{1}".format(i,0)].update(str(buffer[129:154]))
+                    window["rf_{0}_{1}".format(i,1)].update(str(buffer[154:179]))
+                    window["rf_{0}_{1}".format(i,2)].update(str(buffer[179:204]))
+                    window["rf_{0}_{1}".format(i,3)].update(str(buffer[204:229]))
                 
                 else:
                     for p3 in range(32):
@@ -1081,13 +1087,13 @@ def main():
                         window.Refresh()
 
                     #print the RF strings without the binary hex format
-                    rf_flow_1 = str(buffer[130:155]).replace('\\x','').replace('\'','').replace('b','',1)
+                    rf_flow_1 = str(buffer[129:154]).replace('\\x','').replace('\'','').replace('b','',1)
                     window["rf_{0}_{1}".format(i,0)].update(rf_flow_1)
-                    rf_flow_2 = str(buffer[155:180]).replace('\\x','').replace('\'','').replace('b','',1)
+                    rf_flow_2 = str(buffer[154:179]).replace('\\x','').replace('\'','').replace('b','',1)
                     window["rf_{0}_{1}".format(i,1)].update(rf_flow_2)
-                    rf_flow_3 = str(buffer[180:205]).replace('\\x','').replace('\'','').replace('b','',1)
+                    rf_flow_3 = str(buffer[179:204]).replace('\\x','').replace('\'','').replace('b','',1)
                     window["rf_{0}_{1}".format(i,2)].update(rf_flow_3)
-                    rf_flow_4 = str(buffer[205:230]).replace('\\x','').replace('\'','').replace('b','',1)
+                    rf_flow_4 = str(buffer[204:229]).replace('\\x','').replace('\'','').replace('b','',1)
                     window["rf_{0}_{1}".format(i,3)].update(rf_flow_4)
                 
                 
