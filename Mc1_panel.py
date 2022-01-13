@@ -2,6 +2,7 @@
 #https://pysimplegui.readthedocs.io/en/latest/call%20reference/
 
 from datetime import datetime
+from fcntl import DN_ACCESS
 import struct
 from time import sleep
 import PySimpleGUI as sg
@@ -14,6 +15,12 @@ import numpy as np
 from struct import *
 from struct import Struct
 from tkinter.font import Font
+
+#libraries for the DACs Calibration
+import statsmodels.api as sm
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from collections import namedtuple
 import time 
@@ -58,6 +65,8 @@ connectionEnabled = False
 pages=list(range(0,19))
 angles=list(range(0,300))
 tables=list(range(0,13))
+dac = list(range(1,3))
+channel = list(range(0,16))
 flash_table_data=[]
 serialChannel=Serial()
 
@@ -515,7 +524,8 @@ def main():
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
                     sg.Button("Open", key = "read-flash-file"),
-                    sg.Button("Save", key = "write-flash-file"),],
+                    sg.Button("Save", key = "write-flash-file"),
+                    sg.Checkbox('Overwrite calibration',key="-overwrite-",default=False,size=(21,1))],
 
                 [sg.Checkbox("Enable Debug mode",key="debug", default=False, size=(17,1)),sg.Button("Instruction")],
                         
@@ -542,7 +552,6 @@ def main():
             ]
 
     tab4_layout = [
-
                 [sg.T('V BIAS'),sg.In(key='vbias',size=(5,1),default_text='100',readonly=True)],
                 [sg.T('DAC1 00-15')],
                 
@@ -695,7 +704,13 @@ def main():
                 sg.In(key='intercept_2_29',size=(5,1),readonly=True,default_text='0'),
                 sg.In(key='intercept_2_30',size=(5,1),readonly=True,default_text='0'),
                 sg.In(key='intercept_2_31',size=(5,1),readonly=True,default_text='0')],
-            ]    
+
+                [sg.Canvas(key='figCanvas')],
+                [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),sg.Button('Open File',key='-OPCALIBRATION-')],
+                [sg.T('Details of DAC'),sg.Combo(dac,key='-DAC-Calib-',default_value=1),sg.T('Channel'),sg.Combo(channel,key='-CHAN-Calib',default_value=0),sg.Button('Enter')]
+              
+            ]  
+              
 
     layout = [
                 [

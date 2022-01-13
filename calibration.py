@@ -15,7 +15,6 @@ from PySimpleGUI.PySimpleGUI import T, Multiline, popup
 from serial import *
 import serial.tools.list_ports
 import glob
-import numpy as np
 from struct import *
 from struct import Struct
 from tkinter.font import Font
