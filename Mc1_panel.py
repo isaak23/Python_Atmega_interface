@@ -313,6 +313,13 @@ def generate_point(index):
     ]
     return tmp_layout
 
+#define a canvas for the graph
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
 def main():
     global config
 
@@ -730,7 +737,13 @@ def main():
         elif event == "Connect":
             serialPort = window["-port-"].get() #mette dentro la variabile serialPort il valore contenuto in quel momento dalla chiave "-port-"
             baudRate = window["-baudrate-"].get()
-            serialChannel = Serial(serialPort , baudRate, timeout=None, xonxoff=True, bytesize = EIGHTBITS, writeTimeout=0) #ensure non-blocking #serialChannel = Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
+            serialChannel = Serial( serialPort, 
+                                    baudRate,
+                                    timeout=None,
+                                    xonxoff=True,
+                                    stopbits=STOPBITS_ONE,
+                                    bytesize = EIGHTBITS, 
+                                    writeTimeout=0) #ensure non-blocking
             if serialChannel.is_open :
                for i in range(255):
                    serialChannel.write(b'\n')
@@ -1041,7 +1054,7 @@ def main():
                 serialChannel.flush() #svuoto il buffer
                 sleep(0.3) #aspetto 300 ms
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
-                
+                sg.Print(buffer)
                 #visualize the buffer in hex numer
                 buffer_int = unpack_from(">231B",buffer)
                 b_int=[]

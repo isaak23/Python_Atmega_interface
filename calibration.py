@@ -86,7 +86,7 @@ def main():
                 sg.Print(model.summary())
                 sg.Print(model.params)
 
-                plt.plot(ctable["DAC1_2"],ctable["Voltage_Dec"],'yo:',label="measured values") #ristampo i valori dei punti che ho misurato bo: vuol dire b --> blue color,o--> round points, : -->linea 
+                plt.plot(ctable["DAC1_2"],ctable["Voltage_Dec"],'ro:',label="measured values") #display the values of the measured points bo: vuol dire r --> red color,o--> round points, : -->linea 
                 
                 #for see the values of the measured numbers on the points
                 for x,y in zip(ctable["DAC1_2"],ctable["Voltage_Dec"]):
