@@ -510,7 +510,7 @@ def main():
                     sg.T('ManID', key="ManID"),
                     sg.T('Capacity', key="Capacity"),
                     sg.T('MaxPages', key="MaxPages"),
-                    sg.Button('QueryFlash'),],
+                    sg.Button('QueryFlash',disabled=False),],
             
                 [sg.T('Table'),sg.Combo(tables,key='-table-',default_value=0),
                     sg.T('Page '),   sg.Combo(pages, key='-page-' ,default_value=0),
@@ -1073,10 +1073,11 @@ def main():
                 
                 serialChannel.write(data) #mando la richiesta al micro 1
                 serialChannel.flush() #svuoto il buffer
-                sleep(0.3) #aspetto 300 ms
+                sleep(0.4) #aspetto 300 ms
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
                 sg.Print(buffer)
                 #visualize the buffer in hex numer
+               
                 buffer_int = unpack_from(">230B",buffer)
                 b_int=[]
                 for z in range(len(buffer_int)):
