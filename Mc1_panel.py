@@ -502,56 +502,8 @@ def main():
                             sg.In(key='HeatStatus7',size = (10, 1),readonly=True),
                         ]       
                     ] 
-    #flash management tab
+    
     tab3_layout = [
-
-                [sg.T('Flash Management') ],
-                [sg.T('FLASH ID'),
-                    sg.T('ManID', key="ManID"),
-                    sg.T('Capacity', key="Capacity"),
-                    sg.T('MaxPages', key="MaxPages"),
-                    sg.Button('QueryFlash',disabled=False),],
-            
-                [sg.T('Table'),sg.Combo(tables,key='-table-',default_value=0),
-                    sg.T('Page '),   sg.Combo(pages, key='-page-' ,default_value=0),
-                    sg.Button('ReadPoints'),sg.Button('WritePoints', disabled=True),
-                    sg.Button('ErasePage',  font=font, button_color='red'),sg.T('...', key="elapsed", size=(10,1)),],
-                
-                [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
-                    sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='500'),sg.T("us"),
-                    sg.Button("Send Angle", key = "angle-to-mc2") ],
-                        
-                [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
-                    sg.Button("Open", key = "read-flash-file"),
-                    sg.Button("Save", key = "write-flash-file"),
-                    sg.Checkbox('Overwrite calibration',key="-overwrite-",default=False,size=(21,1))],
-
-                [sg.Checkbox("Enable Debug mode",key="debug", default=False, size=(17,1)),sg.Button("Instruction")],
-                        
-                [sg.TabGroup([
-                            [
-                    sg.Tab('point0',  generate_point(0) , key='point0'), #per ogni tab devo generare un layout , ma è meglio usare una funzione così è più ordinato e modulare
-                    sg.Tab('point1',  generate_point(1) , key='point1'),
-                    sg.Tab('point2',  generate_point(2) , key='point2'),
-                    sg.Tab('point3',  generate_point(3) , key='point3'),
-                    sg.Tab('point4',  generate_point(4) , key='point4'),
-                    sg.Tab('point5',  generate_point(5) , key='point5'),
-                    sg.Tab('point6',  generate_point(6) , key='point6'),
-                    sg.Tab('point7',  generate_point(7) , key='point7'),  
-                    sg.Tab('point8',  generate_point(8) , key='point8'),  
-                    sg.Tab('point9',  generate_point(9) , key='point9'),  
-                    sg.Tab('point10', generate_point(10), key='point10'),  
-                    sg.Tab('point11', generate_point(11), key='point11'),  
-                    sg.Tab('point12', generate_point(12), key='point12'),  
-                    sg.Tab('point13', generate_point(13), key='point13'),  
-                    sg.Tab('point14', generate_point(14), key='point14'),  
-                    sg.Tab('point15', generate_point(15), key='point15'), 
-                            ]])
-                        ],
-            ]
-
-    tab4_layout = [
                 [sg.T('V BIAS'),sg.In(key='vbias',size=(5,1),default_text='100',readonly=True)],
                 [sg.T('DAC1 00-15')],
                 
@@ -709,7 +661,57 @@ def main():
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),sg.Button('Open File',key='-OPCALIBRATION-')],
                 [sg.T('Details of DAC'),sg.Combo(dac,key='-DAC-Calib-',default_value=1),sg.T('Channel'),sg.Combo(channel,key='-CHAN-Calib',default_value=0),sg.Button('Enter')]
               
-            ]  
+            ]      
+    #flash management tab
+    tab4_layout = [
+
+                [sg.T('Flash Management') ],
+                [sg.T('FLASH ID'),
+                    sg.T('ManID', key="ManID"),
+                    sg.T('Capacity', key="Capacity"),
+                    sg.T('MaxPages', key="MaxPages"),
+                    sg.Button('QueryFlash',disabled=False),],
+            
+                [sg.T('Table'),sg.Combo(tables,key='-table-',default_value=0),
+                    sg.T('Page '),   sg.Combo(pages, key='-page-' ,default_value=0),
+                    sg.Button('ReadPoints'),sg.Button('WritePoints', disabled=True),
+                    sg.Button('ErasePage',  font=font, button_color='red'),sg.T('...', key="elapsed", size=(10,1)),],
+                
+                [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
+                    sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='500'),sg.T("us"),
+                    sg.Button("Send Angle", key = "angle-to-mc2") ],
+                        
+                [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
+                    sg.Button("Open", key = "read-flash-file"),
+                    sg.Button("Save", key = "write-flash-file"),
+                    sg.Checkbox('Overwrite calibration',key="-overwrite-",default=False,size=(21,1))],
+
+                [sg.Checkbox("Enable Debug mode",key="debug", default=False, size=(17,1)),sg.Button("Instruction")],
+                        
+                [sg.TabGroup([
+                            [
+                    sg.Tab('point0',  generate_point(0) , key='point0'), #per ogni tab devo generare un layout , ma è meglio usare una funzione così è più ordinato e modulare
+                    sg.Tab('point1',  generate_point(1) , key='point1'),
+                    sg.Tab('point2',  generate_point(2) , key='point2'),
+                    sg.Tab('point3',  generate_point(3) , key='point3'),
+                    sg.Tab('point4',  generate_point(4) , key='point4'),
+                    sg.Tab('point5',  generate_point(5) , key='point5'),
+                    sg.Tab('point6',  generate_point(6) , key='point6'),
+                    sg.Tab('point7',  generate_point(7) , key='point7'),  
+                    sg.Tab('point8',  generate_point(8) , key='point8'),  
+                    sg.Tab('point9',  generate_point(9) , key='point9'),  
+                    sg.Tab('point10', generate_point(10), key='point10'),  
+                    sg.Tab('point11', generate_point(11), key='point11'),  
+                    sg.Tab('point12', generate_point(12), key='point12'),  
+                    sg.Tab('point13', generate_point(13), key='point13'),  
+                    sg.Tab('point14', generate_point(14), key='point14'),  
+                    sg.Tab('point15', generate_point(15), key='point15'), 
+                            ]])
+                        ],
+            ]
+
+    
               
 
     layout = [
@@ -721,10 +723,10 @@ def main():
                 ],
                 
                 [
-                        sg.TabGroup([[ sg.Tab('Configuration', tab1_layout),
-                            sg.Tab('Sensors', tab2_layout),
-                            sg.Tab('Flash Programming', tab3_layout),
-                            sg.Tab('DAC Calibration',tab4_layout)
+                        sg.TabGroup([[ sg.Tab('1.Configuration', tab1_layout),
+                            sg.Tab('2.Sensors', tab2_layout),
+                            sg.Tab('3.DAC Calibration', tab3_layout),
+                            sg.Tab('4.Flash Programming',tab4_layout)
                         ]])
                 ],
             ]     
