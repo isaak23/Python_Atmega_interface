@@ -2,7 +2,7 @@
 #https://pysimplegui.readthedocs.io/en/latest/call%20reference/
 
 from datetime import datetime
-from fcntl import DN_ACCESS
+#from fcntl import DN_ACCESS
 import struct
 from time import sleep
 import PySimpleGUI as sg
@@ -519,7 +519,7 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (4,1),default_text='500'),sg.T("ms"),
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='500'),sg.T("us"),
                     sg.Button("Send Angle", key = "angle-to-mc2") ],
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
@@ -817,10 +817,10 @@ def main():
     
             table=window['-table-mc2-'].get()
             point=window['-angles-mc2-'].get()
-            inv_time=round((int(window["inversionTime"].get()))/100)
+            inv_time=round((int(window["inversionTime"].get()))) #inv_time=round((int(window["inversionTime"].get()))/100)
             print("table {0}, point {1}".format(table,point))  # {0},{1} indicano dei simboli sostituibili dai valori posti come anrgomento dnetro format print("When you multiply {0} and {1} or {0} and {2}, the result is {0}".format(0,1,2))
             print(inv_time)
-            data=R_ANGLE_TO_MC2 + pack('>2H', table,point)+ pack('>1B',inv_time)
+            data=R_ANGLE_TO_MC2 + pack('>2H', table,point)+ pack('>1H',inv_time)
             
             for y in range(len(data)):
                 print(hex(data[y]), end=" ")
