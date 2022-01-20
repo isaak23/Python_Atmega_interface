@@ -133,8 +133,8 @@ def log(data , name="DEBUG"):
 def decode_input_data(window,data):
     cmd = data[:1] #first char define the type of data
 
-    if cmd == FLASH_INFO:
-        flash = Flash._make( unpack_from(flash_format, data, offset=2)) # ._make() permette di clonare una namedtuple
+    if False:#if cmd == FLASH_INFO:
+        flash = Flash._make( unpack_from(flash_format, data)) # ._make() permette di clonare una namedtuple
         update_config_panel(window, flash)
         return 0
     else:
@@ -146,8 +146,8 @@ def receiveBuffer(serialChannel):
         MONITOR_DATA    : {"size":15, "start":START_RESPONSE}, # le parentesi graffe sono i "set" che insieme a liste e tuple rapprensentano le strutture dati di python, i set servono per mettere dentro una variabile più oggetti
         READ_CONFIG     : {"size":112, "start":START_RESPONSE},
         R_RPOINT        : {"size":230, "start":START_RESPONSE},
-        FLASH_INFO      : {"size":12, "start":START_RESPONSE},
-        R_ANGLE_TO_MC2  : {"size":8, "start":START_RESPONSE}, #cambiato da 7 a 9 a causa dei due byte per il tempo di inversione
+        FLASH_INFO      : {"size":5, "start":START_RESPONSE},
+        R_ANGLE_TO_MC2  : {"size":9, "start":START_RESPONSE}, #cambiato da 7 a 9 a causa dei due byte per il tempo di inversione
         R_EPAGE         :  {"size":4, "start":START_RESPONSE},
         R_WPOINT        :  {"size":1, "start":START_RESPONSE},
     }
@@ -337,8 +337,8 @@ def main():
     sg.set_options(font=font)
 
     # rendere queste due grandezze configurabili da file
-    vBias = 100
-    v_lsb = 0.0125
+    # vBias = 100
+    # v_lsb = 0.0125
 
     tab1_layout =  [
                         [sg.T('Configuration parameters')],
@@ -658,8 +658,8 @@ def main():
                 sg.In(key='intercept_2_31',size=(5,1),readonly=True,default_text='0')],
 
                 [sg.Canvas(key='figCanvas')],
-                [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),sg.Button('Open File',key='-OPCALIBRATION-')],
-                [sg.T('Details of DAC'),sg.Combo(dac,key='-DAC-Calib-',default_value=1),sg.T('Channel'),sg.Combo(channel,key='-CHAN-Calib',default_value=0),sg.Button('Enter')]
+                [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),sg.Button('Open File',key='-OPCalibration-')],
+                [sg.T('Plot calibration of DAC'),sg.Combo(dac,key='-DAC-Calib-',default_value=1),sg.T('Channel'),sg.Combo(channel,key='-CHAN-Calib',default_value=0),sg.Button('Enter')]
               
             ]      
     #flash management tab
@@ -667,10 +667,10 @@ def main():
 
                 [sg.T('Flash Management') ],
                 [sg.T('FLASH ID'),
-                    sg.T('ManID', key="ManID"),
-                    sg.T('Capacity', key="Capacity"),
-                    sg.T('MaxPages', key="MaxPages"),
-                    sg.Button('QueryFlash',disabled=False),],
+                    sg.In('ID1',size=(4,1),readonly=True, key="ManID"),
+                    sg.In('ID2',size=(4,1),readonly=True, key="Capacity"),
+                    sg.In('ID3',size=(4,1),readonly=True, key="MaxPages"),
+                    sg.Button('QueryFlash')],
             
                 [sg.T('Table'),sg.Combo(tables,key='-table-',default_value=0),
                     sg.T('Page '),   sg.Combo(pages, key='-page-' ,default_value=0),
@@ -685,7 +685,7 @@ def main():
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
                     sg.Button("Open", key = "read-flash-file"),
                     sg.Button("Save", key = "write-flash-file"),
-                    sg.Checkbox('Overwrite calibration',key="-overwrite-",default=False,size=(21,1))],
+                    sg.Checkbox('Use calibration from this file',key="-overwrite-",default=False,size=(30,1))],
 
                 [sg.Checkbox("Enable Debug mode",key="debug", default=False, size=(17,1)),sg.Button("Instruction")],
                         
@@ -731,7 +731,10 @@ def main():
                 ],
             ]     
     
-    window = sg.Window("Control Panel", layout, finalize=True)
+    window = sg.Window("Control Panel",
+                        layout,
+                        finalize=True,
+                        resizable=True,)
 
     update_config_panel(window, config)
 
@@ -790,8 +793,17 @@ def main():
             serialChannel.write(FLASH_INFO)
             serialChannel.flush()
             serialChannel.write(END_COMMAND)
+            sleep(0.2)
             buffer = receiveBuffer(serialChannel)
-            if buffer: decode_input_data(window,buffer)
+            
+            flash_id = unpack_from(">5B",buffer)
+            f_id=[]
+            for fid in range(len(flash_id)):
+                f_id.append(hex(flash_id[fid]))
+            
+            window["ManID"].update(f_id[1])
+            window["Capacity"].update(f_id[2])
+            window["MaxPages"].update(f_id[3])
             window.Refresh()
 
         elif event == "WRITE-CONFIG":
@@ -814,6 +826,36 @@ def main():
             serialChannel.write(END_COMMAND)
             serialChannel.flush()
             sleep(1)
+
+        elif event =="-OPCalibration-":
+            filename = sg.popup_get_file("Select file to read", save_as=False, default_path = window["flash-data-filepath"].get())
+
+            if filename:
+                try:
+                    window["flash-data-filepath"].update(filename)
+                    ctable = pd.read_csv(filename)
+                except NotImplementedError:
+                    pass
+                
+                window["vbias"].update(str(ctable.iat[0,0])) # takes the element in row 0, column 0 and put it in the field "bias" iat is a pandas method that take the value in a row, column
+                
+                for i in range(32):
+                    X = ctable.iloc[:,i+3] #with iloc i select all the rows ":" and the index of column 'i+3'
+                    y = ctable.DAC_decimal
+                    X  = sm.add_constant(X)
+                    model = sm.OLS(y,X).fit() # OLS is the linear regression function
+                    window["slope_1_{}".format(i)].update(str(model.params[1]))
+                    window["intercept_1_{}".format(i)].update(str(model.params[0]))
+
+                for j in range(32):
+                    X = ctable.iloc[:,j+35] #with iloc i select all the rows ":" and the index of column 'j+35'
+                    y = ctable.DAC_decimal
+                    X  = sm.add_constant(X)
+                    model = sm.OLS(y,X).fit()
+                    window["slope_2_{}".format(j)].update(str(model.params[1]))
+                    window["intercept_2_{}".format(j)].update(str(model.params[0]))
+
+
 
         elif event == "angle-to-mc2":
     
@@ -854,20 +896,21 @@ def main():
                     lines= file.readlines()
                     file.close()
                     index=0
+                     
+                    if values['-overwrite-'] == True:
+                        window["vbias"].update(lines[0].strip())
 
-                    window["vbias"].update(lines[0].strip())
+                        tmp_data=lines[1].strip().split(",")
+                        for i in range(32):
+                            window["slope_{0}_{1}".format(1,i)].update(tmp_data[i])
+                        for i in range(32):
+                            window["slope_{0}_{1}".format(2,i)].update(tmp_data[i+32])
 
-                    tmp_data=lines[1].strip().split(",")
-                    for i in range(32):
-                        window["slope_{0}_{1}".format(1,i)].update(tmp_data[i])
-                    for i in range(32):
-                        window["slope_{0}_{1}".format(2,i)].update(tmp_data[i+32])
-
-                    tmp_data=lines[2].strip().split(",")
-                    for i in range(32):
-                        window["intercept_{0}_{1}".format(1,i)].update(tmp_data[i])
-                    for i in range(32):
-                        window["intercept_{0}_{1}".format(2,i)].update(tmp_data[i+32])
+                        tmp_data=lines[2].strip().split(",")
+                        for i in range(32):
+                            window["intercept_{0}_{1}".format(1,i)].update(tmp_data[i])
+                        for i in range(32):
+                            window["intercept_{0}_{1}".format(2,i)].update(tmp_data[i+32])
                     
                     for next_line in lines[3:]:
                         tmp_data=next_line.strip().split(",")
@@ -1075,7 +1118,7 @@ def main():
                 
                 serialChannel.write(data) #mando la richiesta al micro 1
                 serialChannel.flush() #svuoto il buffer
-                sleep(0.4) #aspetto 300 ms
+                sleep(0.3) #aspetto 300 ms
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
                 sg.Print(buffer)
                 #visualize the buffer in hex numer
@@ -1154,6 +1197,9 @@ def main():
                 sg.popup("wrong data")
                 log(e, "envet {} ERROR".format(event))
                 pass   
+            
+            window.refresh()
+
         elif event == "eraseChip":
             serialChannel.write(R_ERASE_CHIP)
             serialChannel.flush()
