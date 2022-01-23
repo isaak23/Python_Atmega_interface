@@ -679,7 +679,7 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='500'),sg.T("us"),
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='500', readonly=True),sg.T("us"),
                     sg.Button("Send Angle", key = "angle-to-mc2") ],
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
@@ -793,17 +793,19 @@ def main():
             serialChannel.write(FLASH_INFO)
             serialChannel.flush()
             serialChannel.write(END_COMMAND)
-            sleep(0.2)
+            sleep(0.3)
             buffer = receiveBuffer(serialChannel)
-            
-            flash_id = unpack_from(">5B",buffer)
-            f_id=[]
-            for fid in range(len(flash_id)):
-                f_id.append(hex(flash_id[fid]))
-            
-            window["ManID"].update(f_id[1])
-            window["Capacity"].update(f_id[2])
-            window["MaxPages"].update(f_id[3])
+            try:
+                flash_id = unpack_from(">5B",buffer)
+                f_id=[]
+                for fid in range(len(flash_id)):
+                    f_id.append(hex(flash_id[fid]))
+            except NotImplementedError:
+                pass
+
+            window["ManID"].update(str(f_id[1]).replace('0x','').upper())
+            window["Capacity"].update(str(f_id[2]).replace('0x','').upper())
+            window["MaxPages"].update(str(f_id[3]).replace('0x','').upper())
             window.Refresh()
 
         elif event == "WRITE-CONFIG":
@@ -852,8 +854,8 @@ def main():
                     y = ctable.DAC_decimal
                     X  = sm.add_constant(X)
                     model = sm.OLS(y,X).fit()
-                    window["slope_2_{}".format(j)].update(str(model.params[1]))
-                    window["intercept_2_{}".format(j)].update(str(model.params[0]))
+                    window["slope_2_{}".format(j)].update(str(model.params[1])) #params[1] contains the slope
+                    window["intercept_2_{}".format(j)].update(str(model.params[0])) #params[0] contains the intercept
 
 
 
@@ -1122,14 +1124,15 @@ def main():
                 buffer = receiveBuffer(serialChannel) #metto nel buffer la risposta
                 sg.Print(buffer)
                 #visualize the buffer in hex numer
-               
-                buffer_int = unpack_from(">230B",buffer)
-                b_int=[]
-                for z in range(len(buffer_int)):
-                    b_int.append(hex(buffer_int[z]))
+                try:
+                    buffer_int = unpack_from(">230B",buffer)
+                    b_int=[]
+                    for z in range(len(buffer_int)):
+                        b_int.append(hex(buffer_int[z]))
 
-                log([len(b_int),b_int])
-                
+                    log([len(b_int),b_int])
+                except NotImplementedError:
+                    pass
                 #visualize the buffer in decimal numbers
                 point_data_DAC=unpack_from(">68H",buffer, offset=1) #spacchetto i dati in unsegned short ordnati big endian e li metto nella lista point_data
                 print(point_data_DAC) #stampo a monitor i dati dei DAC in valore decimale (es. 8000 --> 100 volt)
@@ -1198,7 +1201,7 @@ def main():
                 log(e, "envet {} ERROR".format(event))
                 pass   
             
-            window.refresh()
+            window.Refresh()
 
         elif event == "eraseChip":
             serialChannel.write(R_ERASE_CHIP)
