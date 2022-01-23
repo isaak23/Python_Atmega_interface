@@ -657,9 +657,9 @@ def main():
                 sg.In(key='intercept_2_30',size=(5,1),readonly=True,default_text='0'),
                 sg.In(key='intercept_2_31',size=(5,1),readonly=True,default_text='0')],
 
-                [sg.Canvas(key='figCanvas')],
+                #[sg.Canvas(key='figCanvas')],
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),sg.Button('Open File',key='-OPCalibration-')],
-                [sg.T('Plot calibration of DAC'),sg.Combo(dac,key='-DAC-Calib-',default_value=1),sg.T('Channel'),sg.Combo(channel,key='-CHAN-Calib',default_value=0),sg.Button('Enter')]
+                [sg.T('Plot calibration of DAC'),sg.Combo(dac,key='-DAC_Calib-',default_value=1),sg.T('Channel'),sg.Combo(channel,key='-CHAN_Calib-',default_value=0),sg.Button('Enter', key='-Plot-')]
               
             ]      
     #flash management tab
@@ -729,7 +729,9 @@ def main():
                             sg.Tab('4.Flash Programming',tab4_layout)
                         ]])
                 ],
-            ]     
+
+                [sg.Canvas(key='figCanvas')],
+            ] 
     
     window = sg.Window("Control Panel",
                         layout,
@@ -857,6 +859,33 @@ def main():
                     window["slope_2_{}".format(j)].update(str(model.params[1])) #params[1] contains the slope
                     window["intercept_2_{}".format(j)].update(str(model.params[0])) #params[0] contains the intercept
 
+        elif event == "-Plot-":
+                
+                dac_number = window["-DAC_Calib-"].get()
+                dac_channel = window["-CHAN_Calib-"].get()  
+                
+                fig = plt.figure()
+                plt.plot(ctable["DAC{}_{}".format(dac_number,dac_channel)],ctable["DAC_decimal"],'ro:',label="measured values") #display the values of the measured points bo: vuol dire r --> red color,o--> round points, : -->linea 
+                
+                #for see the values of the measured numbers on the points
+                for x,y in zip(ctable["DAC{}_{}".format(dac_number,dac_channel)],ctable["DAC_decimal"]):
+                    label = "{:.2f}".format(x) #se metto x mi appare il vaore delle x, se metto y mi appare il valore delle y
+                    plt.annotate(label, # this is the text
+                    (x,y), # these are the coordinates to position the label
+                    textcoords="offset points", # how to position the text
+                    xytext=(0,10), # distance from text to points (x,y)
+                    ha='center') # horizontal alignment can be left, right or center
+            
+                y_predict = model.params[0] + model.params[1]*ctable["DAC{}_{}".format(dac_number,dac_channel)] #metto dentro y_predict i valori con i coefficienti calcolati dal modello
+
+                plt.plot(ctable["DAC{}_{}".format(dac_number,dac_channel)],y_predict, linewidth=1,color='r',label="fitted values") #stampo la linea della retta interpolata
+                plt.title("calibration")
+                plt.xlabel("measured Values")
+                plt.ylabel("decimal voltage")
+                plt.legend() #add a legend, thje names are in the label parameters of each graph
+
+                #draw_figure(window['figCanvas'].TKCanvas, fig) # show the plot direct in the layout, this have a bug that the plot cannot be closed
+                plt.show(block=False) #show the plot in a popup window, have multiple option like save the plot and others
 
 
         elif event == "angle-to-mc2":
@@ -1133,6 +1162,7 @@ def main():
                     log([len(b_int),b_int])
                 except NotImplementedError:
                     pass
+
                 #visualize the buffer in decimal numbers
                 point_data_DAC=unpack_from(">68H",buffer, offset=1) #spacchetto i dati in unsegned short ordnati big endian e li metto nella lista point_data
                 print(point_data_DAC) #stampo a monitor i dati dei DAC in valore decimale (es. 8000 --> 100 volt)
