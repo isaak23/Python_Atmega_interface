@@ -2,7 +2,6 @@
 #https://pysimplegui.readthedocs.io/en/latest/call%20reference/
 
 from datetime import datetime
-#from fcntl import DN_ACCESS
 import struct
 from time import sleep
 import PySimpleGUI as sg
@@ -96,7 +95,7 @@ text_debug = 'In debug mode the voltages for the DACs need to be a decimal numbe
 
 Flash = namedtuple("Flash",["ManID","Capacity", "MaxPages"])
 
-flash_format='<hll' #<--------controllare cosa è e a che cosa serve
+flash_format='<hll' 
 
 def serial_ports():
     """ Lists serial port names
@@ -679,7 +678,7 @@ def main():
                 
                 [sg.T('Table'),  sg.Combo(tables,key='-table-mc2-',default_value=0),
                     sg.T('Angle'),  sg.Combo(angles, key='-angles-mc2-',size=(3,1),default_value=0),
-                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='500', readonly=True),sg.T("us"),
+                    sg.T("Inversion Time"), sg.In(key='inversionTime',size = (6,1),default_text='450', readonly=True),sg.T("us"),
                     sg.Button("Send Angle", key = "angle-to-mc2") ],
                         
                 [sg.T('File'), sg.In(key = "flash-data-filepath", readonly=True),
@@ -892,7 +891,7 @@ def main():
     
             table=window['-table-mc2-'].get()
             point=window['-angles-mc2-'].get()
-            inv_time=round((int(window["inversionTime"].get()))) #inv_time=round((int(window["inversionTime"].get()))/100)
+            inv_time=round((int(window["inversionTime"].get())-200)) # (-200) because we need to subtract the send time done by mc2 to the DAC
             print("table {0}, point {1}".format(table,point))  # {0},{1} indicano dei simboli sostituibili dai valori posti come anrgomento dnetro format print("When you multiply {0} and {1} or {0} and {2}, the result is {0}".format(0,1,2))
             print(inv_time)
             data=R_ANGLE_TO_MC2 + pack('>2H', table,point)+ pack('>1H',inv_time)
@@ -1214,7 +1213,7 @@ def main():
                 #window['-flash-data-'].update("".rstrip())
                 log("erasing page  {} of table {}".format(page,table))
                 data=R_ERASE_4K + pack('>2h', table,page)
-                print(data)                                                           # per test
+                print(data)                                                          
                 serialChannel.write(data)
                 serialChannel.write(END_COMMAND)
                 serialChannel.flush()
@@ -1249,83 +1248,3 @@ def main():
 if __name__ == '__main__':
     sg.theme('DefaultNoMoreNagging') 
     main()    
-
-#esempio pack
-# >>> from struct import *
-# >>> pack('<2h',0,1)
-# b'\x00\x00\x01\x00'
-# >>> pack('<2h',3,1)  #usato nel pannello, i byte sono invertiti come little endian
-# b'\x03\x00\x01\x00'
-# >>> pack('>2h',3,1)
-# b'\x00\x03\x00\x01'
-
-#esempio unpack
-# struct.unpack_from(fmt, buffer[, offset=0])
-# Unpack the buffer according to the given format. The result is a tuple even if it contains exactly one item.
-# The buffer must contain at least the amount of data required by the format (len(buffer[offset:]) must be at least calcsize(fmt)).
-
-
-#Join all items in a tuple into a string, using a hash character as separator:
-# >>> tupla = ("john","peter","vicky")
-# >>> x = "x".join(tupla)
-# >>> x
-# 'john#peter#vicky'
-
-#map
-# map applica la funzione del primo argomento a tutti gli elementi messi come secondo argomento
-# numbers = [2, 4, 6, 8, 10]
-
-# # returns square of a number
-# def square(number):
-#   return number * number
-
-# # apply square() function to each item of the numbers list
-# squared_numbers_iterator = map(square, numbers)
-
-#window["rf_{0}_{1}".format(i,0)].update("".join(map(str,point_data[64:])))
-
-
-
-# >>> rf_data_1
-# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-# >>> rf_data_2=buffer[180:230]
-# >>> len(rf_data_2)
-# 50
-# >>> rf_data_2
-# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-# >>> rf_data_2=buffer[180:231]
-# >>> rf_data_2
-# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\n'
-# >>> len(rf_data_2)
-# 51
-# >>> dac_data=buffer[2:130]
-# >>> len(dac_data)
-# 128
-
-
-# >>> a.encode('utf-8').hex()
-# '421f'
-# >>> a='\x1f\x40'
-# >>> a.encode('utf-8').hex()
-# '1f40'
-# >>> a=b'\x42\x1f'
-# >>> a.encode('utf-8').hex()
-# Traceback (most recent call last):
-#   File "<stdin>", line 1, in <module>
-# AttributeError: 'bytes' object has no attribute 'encode'
-# >>> str(a)
-# "b'B\\x1f'"
-# >>>
-# >>> chr(a)
-# Traceback (most recent call last):
-#   File "<stdin>", line 1, in <module>
-# TypeError: an integer is required (got type bytes)
-# >>> a = b'B\x1f
-# >>> a.decode('utf-8')
-# 'B\x1f'
-# >>> b=a.decode('utf-8')
-# >>> b.encode('utf-8').hex()
-# '421f'
-
-#per stampare tutto in linea con uno spazio
-# print(hex(buffer_int[i]),end=" ")

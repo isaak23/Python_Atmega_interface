@@ -1,0 +1,98 @@
+BIAS
+slope_dac1_0,slope_dac1_1,...,slope_dac2_31
+intercept_dac1_0,...,intercept_dac2_31
+page0_value_chan_dac1_0,page0_value_chan_dac1_1,...,page0_value_chan_dac2_31,page0_rf_byte_1-25,page0_rf_byte_26-50,page0_rf_byte_51-75,page0_rf_byte_76-100
+page1_value_chan_dac1_0,page1_value_chan_dac1_1,...,page1_value_chan_dac2_31,page1_rf_byte_1-25,page1_rf_byte_26-50,page1_rf_byte_51-75,page1_rf_byte_76-100
+.
+.
+.
+page15_value_chan_dac1_0,page15_value_chan_dac1_1,...,page15_value_chan_dac2_31,page15_rf_byte_1-25,page15_rf_byte_26-50,page15_rf_byte_51-75,page15_rf_byte_76-100
+
+
+
+
+#esempio pack
+# >>> from struct import *
+# >>> pack('<2h',0,1)
+# b'\x00\x00\x01\x00'
+# >>> pack('<2h',3,1)  #usato nel pannello, i byte sono invertiti come little endian
+# b'\x03\x00\x01\x00'
+# >>> pack('>2h',3,1)
+# b'\x00\x03\x00\x01'
+
+#esempio unpack
+# struct.unpack_from(fmt, buffer[, offset=0])
+# Unpack the buffer according to the given format. The result is a tuple even if it contains exactly one item.
+# The buffer must contain at least the amount of data required by the format (len(buffer[offset:]) must be at least calcsize(fmt)).
+
+
+#Join all items in a tuple into a string, using a hash character as separator:
+# >>> tupla = ("john","peter","vicky")
+# >>> x = "x".join(tupla)
+# >>> x
+# 'john#peter#vicky'
+
+#map
+# map applica la funzione del primo argomento a tutti gli elementi messi come secondo argomento
+# numbers = [2, 4, 6, 8, 10]
+
+# # returns square of a number
+# def square(number):
+#   return number * number
+
+# # apply square() function to each item of the numbers list
+# squared_numbers_iterator = map(square, numbers)
+
+#window["rf_{0}_{1}".format(i,0)].update("".join(map(str,point_data[64:])))
+
+
+
+# >>> rf_data_1
+# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+# >>> rf_data_2=buffer[180:230]
+# >>> len(rf_data_2)
+# 50
+# >>> rf_data_2
+# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+# >>> rf_data_2=buffer[180:231]
+# >>> rf_data_2
+# b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\n'
+# >>> len(rf_data_2)
+# 51
+# >>> dac_data=buffer[2:130]
+# >>> len(dac_data)
+# 128
+
+
+# >>> a.encode('utf-8').hex()
+# '421f'
+# >>> a='\x1f\x40'
+# >>> a.encode('utf-8').hex()
+# '1f40'
+# >>> a=b'\x42\x1f'
+# >>> a.encode('utf-8').hex()
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# AttributeError: 'bytes' object has no attribute 'encode'
+# >>> str(a)
+# "b'B\\x1f'"
+# >>>
+# >>> chr(a)
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# TypeError: an integer is required (got type bytes)
+# >>> a = b'B\x1f
+# >>> a.decode('utf-8')
+# 'B\x1f'
+# >>> b=a.decode('utf-8')
+# >>> b.encode('utf-8').hex()
+# '421f'
+
+#per stampare tutto in linea con uno spazio
+# print(hex(buffer_int[i]),end=" ")
+
+
+
+
+
+
