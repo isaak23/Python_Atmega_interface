@@ -18,7 +18,10 @@ from tkinter.font import Font
 #libraries for the DACs Calibration
 import statsmodels.api as sm
 import pandas as pd
+
 import matplotlib.pyplot as plt
+import matplotlib # for test on ubuntu
+matplotlib.use('TkAgg') # for test on ubuntu
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from collections import namedtuple
@@ -65,7 +68,7 @@ pages=list(range(0,19))
 angles=list(range(0,300))
 tables=list(range(0,13))
 dac = list(range(1,3))
-channel = list(range(0,16))
+channel = list(range(0,32))
 flash_table_data=[]
 serialChannel=Serial()
 
@@ -878,9 +881,9 @@ def main():
                 y_predict = model.params[0] + model.params[1]*ctable["DAC{}_{}".format(dac_number,dac_channel)] #metto dentro y_predict i valori con i coefficienti calcolati dal modello
 
                 plt.plot(ctable["DAC{}_{}".format(dac_number,dac_channel)],y_predict, linewidth=1,color='r',label="fitted values") #stampo la linea della retta interpolata
-                plt.title("calibration")
-                plt.xlabel("measured Values")
-                plt.ylabel("decimal voltage")
+                plt.title("Calibration")
+                plt.xlabel("Measured Voltages [V]")
+                plt.ylabel("DAC Values")
                 plt.legend() #add a legend, thje names are in the label parameters of each graph
 
                 #draw_figure(window['figCanvas'].TKCanvas, fig) # show the plot direct in the layout, this have a bug that the plot cannot be closed
